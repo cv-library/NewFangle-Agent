@@ -1,0 +1,167 @@
+=encoding UTF-8
+
+=head1 NAME
+
+NewFangle::Agent::Config - Handle configuration of the unofficial Perl New Relic agent
+
+=head1 SYNOPSIS
+
+    # Point NEWRELIC_CONFIG_FILE to your config file
+
+    # Automatically reads the config on compilation
+    use NewFangle::Agent::Config qw(
+        config_file => ...,
+        environment => ...,
+    );
+
+    # Load the config at runtime
+    require NewFangle::Agent::Config;
+    NewFangle::Agent::Config->initialise(
+        config_file => ...,
+        environment => ...,
+    );
+
+    # Global settings are constant and immutable
+    $config = NewFangle::Agent::Config->global_settings;
+
+    # Local settings are modified by localised variables
+    $config = NewFangle::Agent::Config->local_settings;
+
+=head1 DESCRIPTION
+
+Configuration for the NewFangle agent is read from a variety of sources.
+These are read in order, with later stages overwriting the values from
+previous stages. In order, these are:
+
+=over
+
+=item * Default values
+
+=item * Configuration file
+
+=item * New Relic environment
+
+=item * Environment variables
+
+=back
+
+=head3 Default values
+
+These are hard-coded default values, used if none other is provided.
+
+Default values are as stated below:
+
+    ---
+    enabled: false
+    log_filename: stderr
+    log_level: error
+
+    distributed_tracing:
+        enabled: true
+
+    transaction_tracer:
+        enabled: true
+        threshold: is_apdex_failing
+        stack_trace_threshold: 0.5
+        duration: 0
+
+        include: []
+        exclude: []
+
+        datastore_reporting:
+            record_sql: obfuscated
+            enabled: true
+            threshold: 0.5
+
+    environments: {}
+
+=head3 Configuration file
+
+The location of this file will be
+
+=head3 New Relic environment
+
+=head3 Environment variables
+
+=head4 NEWRELIC_APP_NAME
+
+Mapped to the top-level C<app_name>.
+
+=head4 NEWRELIC_LICENSE_KEY
+
+Mapped to the top-level C<license_key>.
+
+=head4 NEWRELIC_LOG_FILE
+
+Mapped to the top-level C<log_filename>. Shouold be set to the path of a file
+to be used for logging. This can be set to the special values C<stderr> and
+C<stdout> to send the logs to standard error (the default) and standard
+output respectively.
+
+=head4 NEWRELIC_LOG_LEVEL
+
+Mapped to the top-level C<log_level> field. This should be set to a string
+with one of the allowed log levels described above.
+
+=head4 NEWRELIC_ENABLED
+
+Mapped to the top-level C<enabled> field. If this is set to a false value,
+the New Relic integration will be disabled entirely.
+
+=head1 FUNCTIONS
+
+=head2 initialize
+
+    NewFangle::Agent::Config->initialize(
+        config_file => $path // $ENV{NEWRELIC_CONFIG_FILE},
+        environment => $name // $ENV{NEWRELIC_ENVIRONMENT},
+    );
+
+Generate the global config from the specified parameters.
+
+=head2 global_settings
+
+    $config = NewFangle::Agent::Config->global_settings;
+
+Returns a hash reference with a copy of the global settings. Global settings
+are defined at compile time and remain constant until the next call to
+L<initialize|NewFangle::Agent::Config/initialize>.
+=head2 local_settings
+
+    $config = NewFangle::Agent::Config->local_settings;
+
+Returns a hash reference with the local settings. Local settings are defined
+at runtime, by applying the state of the environment to the global settings.
+In particular, this means that aspects of the configuration can be modified
+by localising the environment variables described above.
+
+=head2 struct
+
+    # Using local settings
+    $config = NewFangle::Agent::Config->struct;
+
+    # Using global settings
+    $config = NewFangle::Agent::Config->struct( global => 1 );
+
+Returns a L<NewFangle::Config> object constructed from either the global
+settings (defined at compile time) or the local settings (which can be
+overriden by changes in the environment).
+
+=head1 SEE ALSO
+
+=over
+
+=item L<NewFangle>
+
+=item L<NewFangle::Agent>
+
+=item L<NewFangle::Agent::Config>
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2021 CV-Library Ltd.
+
+This library is free software; you can redistribute it and/or modify it under
+the Artistic License 2.0.

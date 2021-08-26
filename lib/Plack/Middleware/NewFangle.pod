@@ -1,0 +1,40 @@
+=encoding UTF-8
+
+=head1 NAME
+
+Plack::Middleware::NewFangle - Unofficial Perl New Relic agent middleware
+
+=head1 SYNOPSIS
+
+    enable NewFangle => (
+        start_transaction => sub ($app, $env) { ... },
+          end_transaction => sub ($tx,  $res) { ... },
+
+        start_non_web_transaction => sub ($app, $env) { ... },
+          end_non_web_transaction => sub ($tx,  $res) { ... },
+    );
+
+=head1 DESCRIPTION
+
+=head1 CAVEATS
+
+=head2 CGI support is spotty
+
+=head1 SEE ALSO
+
+=over
+
+=item L<NewFangle>
+
+=item L<NewFangle::Agent>
+
+=item L<NewFangle::Agent::Config>
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2021 CV-Library Ltd.
+
+This library is free software; you can redistribute it and/or modify it under
+the Artistic License 2.0.

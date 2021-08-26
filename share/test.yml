@@ -1,0 +1,8 @@
+enabled: true
+license_key: 'DEADBEEF'
+app_name: Perl Application
+log_level: error
+transaction_tracer:
+    enabled: true
+    include:
+        - t/lib

@@ -1,0 +1,128 @@
+# ---------------------------------------------------------------------------
+#
+# This file configures the unofficial New Relic Perl Agent.
+#
+# The path to the configuration file should be supplied to the function
+# newrelic.agent.initialize() when the agent is being initialized.
+#
+# The configuration file uses the YAML format. For further information on
+# the format, see
+#
+#    https://yaml.org
+#
+# For further discussion on the behaviour of the unofficial Perl agent
+# that can be configured via this configuration file see:
+#
+#    http://metacpan.org/pod/NewFangle::Agent#CONFIGURATION
+#
+# ---------------------------------------------------------------------------
+
+# Here are the settings that are common to all environments.
+
+# When "true", the agent collects performance data about your
+# application and reports this data to the New Relic UI at
+# newrelic.com. This global switch is normally overridden for
+# each environment below.
+enabled: true
+
+# You must specify the license key associated with your New
+# Relic account. This key binds the Perl Agent's data to your
+# account in the New Relic service.
+license_key: '*** REPLACE ME ***'
+
+# The application name. Set this to be the name of your
+# application as you would like it to show up in New Relic UI.
+# The UI will then auto-map instances of your application into a
+# entry on your home dashboard page.
+app_name: Perl Application
+
+# Sets the name of a file to log agent messages to. Whatever you
+# set this to, you must ensure that the permissions for the
+# containing directory and the file itself are correct, and
+# that the user that your web application runs as can write out
+# to the file. If not able to out a log file, it is also
+# possible to say "stderr" and output to standard error output.
+# This would normally result in output appearing in your web
+# server log.
+log_filename: stdout
+
+# Sets the level of detail of messages sent to the log file, if
+# a log file location has been provided. Possible values, in
+# increasing order of detail, are: "critical", "error", "warning",
+# "info" and "debug". When reporting any agent issues to New
+# Relic technical support, the most useful setting for the
+# support engineers is "debug". However, this can generate a lot
+# of information very quickly, so it is best not to keep the
+# agent at this level for longer than it takes to reproduce the
+# problem you are experiencing.
+log_level: info
+
+# Distributed tracing lets you see the path that a request takes
+# through your distributed system. Enabling distributed tracing
+# changes the behavior of some New Relic features, so carefully
+# consult the transition guide before you enable this feature:
+# https://docs.newrelic.com/docs/transition-guide-distributed-tracing
+distributed_tracing:
+    enabled: false
+
+transaction_tracer:
+    # The transaction tracer captures deep information about slow
+    # transactions and sends this to the UI on a periodic basis.
+    # The transaction tracer is enabled by default. Set this to "false"
+    # to turn it off.
+    enabled: true
+
+    # Threshold in seconds for when to collect a transaction trace.
+    # When the response time of a controller action exceeds this
+    # threshold, a transaction trace will be recorded and sent to
+    # the UI. Valid values are any positive float value, or (default)
+    # "is_apdex_failing", which will use the threshold for a
+    # dissatisfying Apdex controller action - four times the
+    # Apdex T value.
+    threshold: is_apdex_failing
+
+    # Threshold in seconds for when to collect stack trace for a SQL
+    # call. In other words, when SQL statements exceed this
+    # threshold, then capture and send to the UI the current stack
+    # trace. This is helpful for pinpointing where long SQL calls
+    # originate from in an application.
+    stack_trace_threshold: 0.5
+
+    # In seconds
+    duration: 0
+
+    datastore_reporting:
+        # When the transaction tracer is on, SQL statements can
+        # optionally be recorded. The recorder has three modes, "off"
+        # which sends no SQL, "raw" which sends the SQL statement in its
+        # original form, and "obfuscated", which strips out numeric and
+        # string literals.
+        record_sql: obfuscated
+        enabled: true
+        threshold: 0.5
+
+# ---------------------------------------------------------------------------
+
+#
+# The application environments. These are specific settings which
+# override the common environment settings. The settings related to a
+# specific environment will be used when the environment argument to the
+# newrelic.agent.initialize() function has been defined to be either
+# "development", "test", "staging" or "production".
+#
+
+environments:
+    development:
+        enabled: false
+
+    test:
+        enabled: false
+
+    staging:
+        enabled: true
+        app_name: Perl Application (Staging)
+
+    production:
+        enabled: true
+
+# ---------------------------------------------------------------------------

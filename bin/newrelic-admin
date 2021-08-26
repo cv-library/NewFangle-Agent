@@ -1,0 +1,184 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use lib 'lib';
+
+use Config;
+use File::Share 'dist_file';
+use Getopt::Long qw( :config pass_through );
+
+require NewFangle::Agent::Config; # Do not initialise
+
+get_command( shift // 'help' )->();
+
+sub do_run_perl {
+    GetOptions \my %opt => qw( help );
+
+    if ( $opt{help} ) {
+        print <<'USAGE';
+Usage: newrelic-admin run-perl ...
+
+Executes the Perl interpreter with the supplied arguments but forces
+the initialisation of the agent automatically at startup.
+
+If using an agent configuration file the path to the file should be
+supplied by the environment variable NEWRELIC_CONFIG_FILE. Alternatively,
+just the licence key, application and log file details can be supplied via
+environment variables NEWRELIC_LICENSE_KEY, NEWRELIC_APP_NAME and
+NEWRELIC_LOG_FILE.
+USAGE
+        return;
+    }
+
+    unless ( @ARGV ) {
+        print_usage('run-perl');
+        exit 1;
+    }
+
+    system $Config{perlpath}, '-MNewFangle::Agent', @ARGV;
+}
+
+sub do_license_key {
+    GetOptions \my %opt => qw( help );
+
+    if ( $opt{help} ) {
+        print <<'USAGE';
+Usage: newrelic-admin license-key <config-file> [log-file]
+
+Prints out the account license key after having loaded the settings
+from <config-file>.
+USAGE
+        return;
+    }
+
+    unless ( @ARGV ) {
+        print_usage('license-key');
+        exit 1;
+    }
+
+    my ( $config, $log ) = @ARGV;
+    undef $config if $config eq '-';
+
+    $log //= '/tmp/perl-agent-test.log';
+    unlink $log;
+
+    NewFangle::Agent::Config::initialize(
+        config_file   => $config,
+        ignore_errors => 0,
+        log_file      => $log,
+        log_level     => 'DEBUG',
+    );
+
+    my $settings = NewFangle::Agent::Config->global_settings;
+
+    print 'license_key = ' . $settings->{license_key} . "\n";
+}
+
+sub do_generate_config {
+    GetOptions \my %opt => qw( help );
+
+    if ( $opt{help} ) {
+        print <<'USAGE';
+Usage: newrelic-admin generate-options <license-key> [target-path]
+
+Generates a sample agent configuration file for <license_key>.
+USAGE
+        return;
+    }
+
+    unless ( @ARGV ) {
+        print_usage('generate-config');
+        exit 1;
+    }
+
+    my ( $key, $target ) = @ARGV;
+
+    my $content = do {
+        require NewFangle::Agent;
+        open my $fh, '<', dist_file 'NewFangle-Agent', 'newrelic.yml'
+            or die "Could not read config template: $!";
+        local $/, <$fh>;
+    };
+
+    $content =~ s/\Q*** REPLACE ME ***\E/$key/g if $key;
+
+    my $fh;
+    if ( $target ) {
+        open $fh, '>', $target
+            or die "Could not write to $target: $!";
+    }
+    else {
+        $fh = *STDOUT;
+    }
+
+    print $fh $content;
+}
+
+sub do_local_config {
+    GetOptions \my %opt => qw( help log-file=s );
+
+    if ( $opt{help} ) {
+        print <<'USAGE';
+Usage: newrelic-admin generate-options <config-file> [log-file]
+
+Dumps out the local agent configuration after having loaded the settings
+from <config-file>. If a hyphen (-) is used as the value for <config-file>,
+the default values will be used instead.
+USAGE
+        return;
+    }
+
+    unless ( @ARGV ) {
+        print_usage('local-config');
+        exit 1;
+    }
+
+    my $config = $ARGV[0];
+    undef $config if $ARGV[0] eq '-';
+
+    NewFangle::Agent::Config::initialize(
+        config_file   => $config,
+        log_file      => $opt{'log-file'},
+    );
+
+    require YAML::XS;
+    print YAML::XS::Dump( NewFangle::Agent::Config->global_settings );
+}
+
+sub do_help {
+    GetOptions \my %opt => qw( help );
+
+    print_usage( $ARGV[0] ) if $ARGV[0];
+
+    print <<'USAGE';
+Usage: newrelic-admin command [options]
+
+Type 'newrelic-admin help <command>'
+for help on a specific command.
+
+Available commands are:
+USAGE
+
+    print " $_\n" for sort map { s/^do_//; y/_/-/; $_ } grep /^do_/, keys %main::;
+}
+
+sub get_command {
+    my $command = shift;
+
+    my $code = $main::{ 'do_' . ( $command =~ s/-/_/gr ) };
+
+    unless ( $code ) {
+        print "Unknown command '$command'. Type '$0 help' for usage\n";
+        exit 1;
+    }
+
+    $code;
+}
+
+sub print_usage {
+    my ( $command, $code ) = @_;
+    local @ARGV = qw( --help );
+    get_command( $command )->();
+    exit ( $code // 0 );
+}
