@@ -27,10 +27,6 @@ our $Trace; # Should this be traced
 
 our $VERSION = '0.001';
 
-# a log file location has been provided. Possible values, in
-# increasing order of detail, are: "critical", "error", "warning",
-# "info" and "debug". When reporting any agent issues to New
-
 my $wrap = sub {
     my ( $arg, $log_level ) = @_;
 
