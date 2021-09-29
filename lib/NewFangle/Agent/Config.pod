@@ -126,6 +126,7 @@ Generate the global config from the specified parameters.
 Returns a hash reference with a copy of the global settings. Global settings
 are defined at compile time and remain constant until the next call to
 L<initialize|NewFangle::Agent::Config/initialize>.
+
 =head2 local_settings
 
     $config = NewFangle::Agent::Config->local_settings;
