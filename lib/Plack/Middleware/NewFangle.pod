@@ -24,11 +24,11 @@ Plack::Middleware::NewFangle - Unofficial Perl New Relic agent middleware
 
 =over
 
-=item L<NewFangle>
+=item * L<NewFangle>
 
-=item L<NewFangle::Agent>
+=item * L<NewFangle::Agent>
 
-=item L<NewFangle::Agent::Config>
+=item * L<NewFangle::Agent::Config>
 
 =back
 

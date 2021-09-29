@@ -152,11 +152,11 @@ overriden by changes in the environment).
 
 =over
 
-=item L<NewFangle>
+=item * L<NewFangle>
 
-=item L<NewFangle::Agent>
+=item * L<NewFangle::Agent>
 
-=item L<NewFangle::Agent::Config>
+=item * L<NewFangle::Agent::Config>
 
 =back
 
