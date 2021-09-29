@@ -61,6 +61,7 @@
          },
          "requires" : {
             "ExtUtils::MakeMaker" : "0",
+            "File::Share" : "0",
             "File::Spec" : "0",
             "Test2::Suite" : "0",
             "Test::More" : "0",
