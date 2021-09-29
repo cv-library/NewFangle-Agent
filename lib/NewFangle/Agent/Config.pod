@@ -65,8 +65,19 @@ Default values are as stated below:
         stack_trace_threshold: 0.5
         duration: 0
 
-        include: []
-        exclude: []
+        include:
+            subpackages:
+                DBI:
+                    - DBI::st
+            subroutines:
+                HTTP::Tiny:
+                    - request
+                LWP::UserAgent:
+                    - request
+                DBI::st:
+                    - execute
+
+        exclude: {}
 
         datastore_reporting:
             record_sql: obfuscated

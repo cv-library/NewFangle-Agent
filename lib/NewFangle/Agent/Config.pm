@@ -33,6 +33,24 @@ my $defaults = {
             enabled    => 1,
             threshold  => 0.5,
         },
+        include => {
+            subpackages => {
+                DBI => [qw(
+                    DBI::st
+                )],
+            },
+            subroutines => {
+                'HTTP::Tiny' => [qw(
+                    request
+                )],
+                'LWP::UserAgent' => [qw(
+                    request
+                )],
+                'DBI::st' => [qw(
+                    execute
+                )],
+            },
+        },
     },
 };
 

@@ -22,12 +22,65 @@ NewFangle::Agent is an unofficial monitoring agent for New Relic. It is used
 to make it easier to instrument the New Relic integration in your application.
 
 When this module is first imported, it goes through every loaded module
-looking for relevant functions, and installs monitoring hooks around them.
+looking for relevant functions, and installs monitoring hooks around them
 so that a [NewFangle::Segment](https://metacpan.org/pod/NewFangle%3A%3ASegment) is started when the function is called, and
-ended when the function returns.
+ended when the function returns (see below for ways in which this can be
+customised).
 
 It also modifies the module loading mechanism so that this logic gets executed
 on any module loaded after this point.
+
+## Adjusting the monitoring segments
+
+The New Relic API supports several types of monitoring segments, which can
+hold different type of metadata that is useful for monitoring.
+
+This module ships with code to detect some well-known functions and start
+the appropriate tracking segment to record that activity. Specifically,
+this includes
+
+- [HTTP::Tiny::request](https://metacpan.org/pod/HTTP%3A%3ATiny#request)
+
+    Will start an [external segment](https://metacpan.org/pod/NewFangle%3A%3ATransaction#start_external_segment).
+
+- [LWP::UserAgent::request](https://metacpan.org/pod/LWP%3A%3AUserAgent#request)
+
+    Will start an [external segment](https://metacpan.org/pod/NewFangle%3A%3ATransaction#start_external_segment).
+
+- [DBI::st::execute](https://metacpan.org/pod/DBI#execute)
+
+    Will start a [datastore segment](https://metacpan.org/pod/NewFangle%3A%3ATransaction#start_datastore_segment).
+
+The code that starts these segments is generated with the `generate_segment_starter`
+function, described in more detail [below](#generate_segment_starter).
+
+# FUNCTIONS
+
+## generate\_segment\_starter
+
+    $coderef = NewFangle::Agent::generate_segment_starter( $package, $subname );
+
+Returns a code ref that will be called whenever the specified subroutine is
+called. The code reference should _always_ return a [NewFangle::Segment](https://metacpan.org/pod/NewFangle%3A%3ASegment)
+object.
+
+If `generate_segment_starter` returns an undefined value, a default tracking
+segment will be started instead.
+
+This function can be overriden in subclasses that want to modify the default
+wrapping in NewFangle::Agent, but it is recommended that you still delegate
+to the version shipped to catch any remaining cases.
+
+See ["Adjusting the monitoring segments"](#adjusting-the-monitoring-segments) above for a discussion of this
+process.
+
+## install\_wrappers
+
+    NewFangle::Agent::install_wrappers( $package );
+
+Installs the hooks to start tracking segments before the relevant function
+calls in the specified package. This function can be called manually to load
+a sub-package that would otherwise not be automatically picked up.
 
 # CONFIGURATION
 
