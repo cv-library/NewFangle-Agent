@@ -60,7 +60,7 @@ my $wrap = sub {
 
         next
             # Skip import and unimport
-            if $subname =~ /import$/
+            if $subname =~ /^(?:un)?import$/
             # Skip uppercase functions
             || uc($subname) eq $subname
             # Skip "private" functions
