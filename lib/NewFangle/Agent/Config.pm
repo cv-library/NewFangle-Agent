@@ -144,6 +144,13 @@ sub struct {
     delete $tx->{include};
     delete $tx->{exclude};
 
+    # Silence warnings in FFI::CStructDef about falsy empty strings
+    $agent->{datastore_tracer}{database_name_reporting}        ||= 0;
+    $agent->{datastore_tracer}{instance_reporting}             ||= 0;
+    $agent->{distributed_tracing}{enabled}                     ||= 0;
+    $agent->{transaction_tracer}{datastore_reporting}{enabled} ||= 0;
+    $agent->{transaction_tracer}{enabled}                      ||= 0;
+
     NewFangle::Config->new( %$agent );
 }
 
