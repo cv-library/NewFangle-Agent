@@ -210,7 +210,7 @@ sub generate_segment_starter ( $package, $subname ) {
     return sub {
         $TX->start_external_segment([
             "$_[1]" =~ s/\?.*//r, # URL minus query parameters
-            $subname,
+            uc $_[0],
             $package,
         ]);
     } if $fullname eq 'HTTP::Tiny::request';
@@ -218,7 +218,7 @@ sub generate_segment_starter ( $package, $subname ) {
     return sub {
         $TX->start_external_segment([
             "$_[0]->url" =~ s/\?.*//r, # URL minus query parameters
-            $subname,
+            uc $_[0]->method,
             $package,
         ]);
     } if $fullname eq 'LWP::UserAgent::request';
