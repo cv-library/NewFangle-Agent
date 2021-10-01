@@ -52,7 +52,7 @@ my $parse_includes = sub {
 
         if ( $log_level >= DEBUG ) {
             warn ucfirst($type) . " paths:\n";
-            warn "* $_\n" for @list;
+            warn "- $_\n" for @list;
         }
     }
 
@@ -64,7 +64,7 @@ my $parse_includes = sub {
         if ( $log_level >= DEBUG ) {
             warn ucfirst($type) . " subroutines:\n";
             for my $k ( sort keys %{ $subroutines } ) {
-                warn "* ${k}::$_\n" for sort keys %{ $subroutines->{$k} };
+                warn "- ${k}::$_\n" for sort keys %{ $subroutines->{$k} };
             }
         }
     }
@@ -77,7 +77,8 @@ my $parse_includes = sub {
         if ( $log_level >= DEBUG ) {
             warn ucfirst($type) . " subpackages:\n";
             for my $k ( sort keys %{ $subpackages } ) {
-                warn "* ${k}::$_\n" for sort keys %{ $subpackages->{$k} };
+                warn "- ${k}:\n";
+                warn "  - $_\n" for sort keys %{ $subpackages->{$k} };
             }
         }
     }
@@ -278,6 +279,11 @@ sub import {
         && $config->{transaction_tracer}{enabled};
 
     $log_level = $config->{log_level} // 0;
+
+    if ( $log_level >= DEBUG ) {
+        print STDERR "Loading New Relic agent\n";
+        print STDERR "See https://github.com/cv-library/NewFangle-Agent for details\n";
+    }
 
     ( $include_paths, $include_subroutines, $include_subpackages ) = $parse_includes->( include => $config );
     ( $exclude_paths, $exclude_subroutines, $exclude_subpackages ) = $parse_includes->( exclude => $config );
