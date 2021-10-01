@@ -66,10 +66,12 @@ my $set_log = sub {
     for ( $_[0]->{log_level} ) {
         my $name = lc;
 
-           if ( $name eq 'error'   ) { $_ = dualvar( 1 => $name ) }
-        elsif ( $name eq 'warning' ) { $_ = dualvar( 2 => $name ) }
-        elsif ( $name eq 'info'    ) { $_ = dualvar( 3 => $name ) }
-        elsif ( $name eq 'debug'   ) { $_ = dualvar( 4 => $name ) }
+           if ( $name eq 'critical' ) { $_ = dualvar( 0 => $name ) }
+        elsif ( $name eq 'error'    ) { $_ = dualvar( 1 => $name ) }
+        elsif ( $name eq 'warning'  ) { $_ = dualvar( 2 => $name ) }
+        elsif ( $name eq 'info'     ) { $_ = dualvar( 3 => $name ) }
+        elsif ( $name eq 'debug'    ) { $_ = dualvar( 4 => $name ) }
+        elsif ( $name eq 'trace'    ) { $_ = dualvar( 5 => $name ) }
         else {
             warn "Unrecognised log level in config: $_";
             delete $_[0]->{log_level};

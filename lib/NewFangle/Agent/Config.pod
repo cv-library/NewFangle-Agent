@@ -45,6 +45,8 @@ previous stages. In order, these are:
 
 =back
 
+You can find a little more detail on each of these levels below.
+
 =head3 Default values
 
 These are hard-coded default values, used if none other is provided.
@@ -96,28 +98,23 @@ The location of this file will be
 
 =head4 NEWRELIC_APP_NAME
 
-Mapped to the top-level C<app_name>.
+Mapped to L<app_name|/app_name>.
 
 =head4 NEWRELIC_LICENSE_KEY
 
-Mapped to the top-level C<license_key>.
+Mapped to L<license_key|/license_key>.
 
 =head4 NEWRELIC_LOG_FILE
 
-Mapped to the top-level C<log_filename>. Shouold be set to the path of a file
-to be used for logging. This can be set to the special values C<stderr> and
-C<stdout> to send the logs to standard error (the default) and standard
-output respectively.
+Mapped to L<log_filename|/log_filename>.
 
 =head4 NEWRELIC_LOG_LEVEL
 
-Mapped to the top-level C<log_level> field. This should be set to a string
-with one of the allowed log levels described above.
+Mapped to L<log_level|/log_level>.
 
 =head4 NEWRELIC_ENABLED
 
-Mapped to the top-level C<enabled> field. If this is set to a false value,
-the New Relic integration will be disabled entirely.
+Mapped to L<enabled|/enabled>.
 
 =head1 FUNCTIONS
 
@@ -159,6 +156,244 @@ Returns a L<NewFangle::Config> object constructed from either the global
 settings (defined at compile time) or the local settings (which can be
 overriden by changes in the environment).
 
+=head1 KEYS
+
+=head2 enabled
+
+Boolean, defaults to false.
+
+If this is set to a false value, the New Relic integration will be disabled
+entirely.
+
+Can be overriden with the C<NEWRELIC_ENABLED> environment file.
+
+=head2 app_name
+
+String, must be set.
+
+Can be overriden with the C<NEWRELIC_APP_NAME> environment file.
+
+=head2 license_key
+
+String, must be set.
+
+Can be overriden with the C<NEWRELIC_LICENSE_KEY> environment file.
+
+=head2 log_filename
+
+String, defaults to C<stderr>.
+
+Should be set to the path of a file to be used for logging. This can be
+set to the special values C<stderr> and C<stdout> to send the logs to
+standard error (the default) and standard output respectively.
+
+Can be overriden with the C<NEWRELIC_LOG_FILE> environment file.
+
+=head2 log_level
+
+String, defaults to C<error>.
+
+This should be set to one of the allowed log levels described. In
+increasing order of verbosity:
+
+=over
+
+=item * critical
+
+=item * error
+
+=item * warning
+
+=item * info
+
+=item * debug
+
+=item * trace
+
+=back
+
+If set to an unrecognised value, the value will fall back to the default.
+
+Can be overriden with the C<NEWRELIC_LOG_LEVEL> environment file.
+
+=head2 distributed_tracing
+
+=head3 enabled
+
+Bool, defaults to C<true>.
+
+Distributed tracing lets you see the path that a request takes through your
+istributed system. Enabling distributed tracing changes the behavior of some
+New Relic features, so carefully consult
+L<the transition guide|https://docs.newrelic.com/docs/transition-guide-distributed-tracing>
+before you enable this feature:
+
+=head2 transaction_tracer
+
+The transaction tracer captures deep information about slow transactions and
+sends this to the UI on a periodic basis.
+
+=head3 enabled
+
+Bool, defaults to C<true>.
+
+Setting this to a flase value disables transaction traces.
+
+=head3 threshold
+
+String, defaults to C<is_apdex_failing>.
+
+This key controls which transactions will issue transaction traces to the New Relic
+daemon. It has only two possible values:
+
+=over
+
+=item *
+
+If set to C<is_apdex_failing> (the default), transactions taking more than
+four times the Apdex T value (the threshold for a dissatisfying Apdex
+transaction) will be eligible.
+
+=item *
+
+If set to C<is_over_duration>, transactions taking more than the number
+of seconds specified in L<transaction_tracer.duration|/duration> will be
+eligible instead.
+
+=back
+
+=head3 stack_trace_threshold
+
+Number, defaults to 0.5.
+
+In seconds.
+
+=head3 duration
+
+Number, defaults to 0.
+
+If L<transaction_tracer.threshold|/threshold> is set to C<is_over_duration>,
+any transaction that takes more than the number of seconds in this field
+will issue a transaction trace to the New Relic daemon.
+
+Otherwise, this value is ignored.
+
+=head4 datastore_reporting
+
+When the transaction tracer is on, SQL statements can optionally be recorded.
+Options under this ection control how these are recorded.
+
+=over
+
+=item enabled
+
+Boolean, defaults to C<true>.
+
+Set to false to never record SQL statements.
+
+=item record_sql
+
+String, defaults to C<obfuscated>.
+
+The recorder has three modes: "off", which sends no SQL; "raw", which sends
+the SQL statement in its original form; and "obfuscated" (the default), which
+strips out numeric and string literals.
+
+=item threshold
+
+Number, defaults to 0.5.
+
+Specifies the number of seconds above which a datastore query is considered
+"slow", and eligibly for reporting.
+
+=back
+
+=head3 include / exclude
+
+The C<include> and C<exclude> sections control the package and subroutines
+that are considered to be relevant by the monitoring code. Fields in the
+C<exclude> section take precedence.
+
+=head4 paths
+
+This field should be set to list of literal paths or path segments. Any code
+that is loaded from those paths will be included or excluded depending on what
+section this was under.
+
+For example:
+
+    transaction_tracer:
+        include:
+            paths:
+                - lib/Local
+                - lib/Test
+        exclude:
+            paths:
+                - lib/Local/Secret
+
+would make all the code that is loaded from C<lib/Local> and C<lib/Test>,
+except the code loaded from C<lib/Local/Secret>, relevant for monitoring.
+
+=head4 subpackages
+
+Perl allows multiple packages to be defined inside the same file, so that
+importing one file makes all of those packages available, without the
+subpackages ever being explicitly loaded. Under normal circumstances, this
+makes these packages invisible to L<NewFangle::Agent>.
+
+This key makes it possible to specify packages that should be wrapped for
+monitoring whenever L<NewFangle::Agent> detects another packages being
+loaded.
+
+This field should be set to a hash where the keys are package names and
+the values are lists of packages to be wrapped whenever the parent is.
+
+For example:
+
+    transaction_tracer:
+        include:
+            subpackages:
+                Local::Foo:
+                    - Local::Foo::Bar
+
+This mapping has no meaning under C<exclude>, and is ignored in that case.
+
+=head4 subroutines
+
+In some cases, some specific subroutines are of interest even though they
+are defined in packages that would otherwise not be eligible for reporting.
+
+This field makes it possible to mark those subroutines as explicitly
+relevant or irrelevant depending on the section this is under. If under
+C<include>, these subroutines will always be wrapped; while under C<exclude>
+they will I<never> be.
+
+This field should be set to a hash where the keys are package names and
+the values are lists of subroutine names.
+
+For example:
+
+    transaction_tracer:
+        include:
+            subroutines:
+                Local::Splines:
+                    - reticulate
+        exclude:
+            subroutines:
+                Local::Splines:
+                    - frobligate
+
+This would make C<Local::Splines::reticulate> I<always> be wrapped, even
+if C<Local::Splines> was loaded from a path that was not otherwise
+specified as relevant. Likewise, C<Local::Splines::frobligate> would never
+be wrapped, even if C<Local::Splines> was marked as relevant through some
+other method.
+
+=head2 environments
+
+Keys are environment names. Values are configuration values that will be
+merged to those from the top-level config.
+
 =head1 SEE ALSO
 
 =over
@@ -167,7 +402,7 @@ overriden by changes in the environment).
 
 =item * L<NewFangle::Agent>
 
-=item * L<NewFangle::Agent::Config>
+=item * L<NewFangle::Config>
 
 =back
 
