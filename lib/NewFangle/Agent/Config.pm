@@ -14,7 +14,7 @@ use Carp 'croak';
 
 use namespace::clean;
 
-my ( $config, $instance );
+my ( $config );
 
 my $defaults = {
     enabled      => 0,
@@ -144,7 +144,7 @@ sub struct {
     delete $tx->{include};
     delete $tx->{exclude};
 
-    $instance //= NewFangle::Config->new( %$agent );
+    NewFangle::Config->new( %$agent );
 }
 
 1;
