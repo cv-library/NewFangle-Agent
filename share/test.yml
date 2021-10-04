@@ -5,4 +5,5 @@ log_level: error
 transaction_tracer:
     enabled: true
     include:
-        - t/lib
+        paths:
+            - t/lib
