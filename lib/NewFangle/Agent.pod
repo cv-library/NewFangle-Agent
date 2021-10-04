@@ -108,22 +108,11 @@ around function calls, so importing NewFangle::Agent is a no-op.
 The code in NewFangle::Agent does output some logging of its own, which is
 controlled by C<log_level>. Set the level to at least debug to see output.
 
-C<transaction_tracer.include> and C<transaction_tracer.exclude> control what
-code should be wrapped. They should be set to list of literal paths or path
-segments, and any code that is found to be in those paths will be included
-or not depending what list the path was on.
-
-For example:
-
-    transaction_tracer:
-        include:
-            - lib/Local
-            - lib/Test
-        exclude:
-            - lib/Local/Secret
-
-would make all the code that is loaded from C<lib/Local> and C<lib/Test>,
-except the code loaded from C<lib/Local/Secret>, will be considered relevant.
+The sections under C<transaction_tracer.include> and
+C<transaction_tracer.exclude> make it possible to tweak the heuristics used
+to determine what code is relevant for monitoring. Refer to
+L<the relevant documentation|NewFangle::Agent::Config/include \/ exclude>
+for more details.
 
 =head2 Runtime configuration
 
