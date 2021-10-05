@@ -1,5 +1,5 @@
 use NewFangle::Agent::Wrapper;
-print "1..54\n";
+print "1..61\n";
 
 sub ok   { print "ok $_[0]\n" }
 sub fail(&) { print "not " if $_[0]->() }
@@ -198,3 +198,21 @@ wrap wrapped =>
 	post => sub {};
 
 outer(49..54);
+
+{
+    # exceptions
+    my $die;
+    sub foo { ok $_[0]; die 'died' if $die }
+
+    wrap foo => (
+        pre  => sub { ok $_[0] - 1 },
+        post => sub { ok $_[0] + 1 },
+    );
+
+    foo(56);
+
+    $die = 1 and eval { foo(59) };
+
+    print 'not ' unless $@ =~ /died/;
+    ok 61;
+}
