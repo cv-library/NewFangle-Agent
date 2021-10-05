@@ -16,6 +16,7 @@ use Plack::Util::Accessor qw(
 );
 
 use NewFangle 'newrelic_init';
+use NewFangle::Agent::Config;
 use Scalar::Util 'weaken';
 
 use namespace::clean;

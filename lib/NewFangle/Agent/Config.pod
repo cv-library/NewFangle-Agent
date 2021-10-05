@@ -160,6 +160,8 @@ Returns a L<NewFangle::Config> object constructed from either the global
 settings (defined at compile time) or the local settings (which can be
 overriden by changes in the environment).
 
+By default, it will be generated from the local environment.
+
 =head1 KEYS
 
 =head2 enabled
