@@ -7,7 +7,7 @@ use feature 'state';
 use experimental 'signatures';
 
 use Devel::Peek;
-use Hook::LexWrap;
+use NewFangle::Agent::Wrapper; # As a temporary fork of Hook::LexWrap
 use NewFangle::Agent::Config;
 use Carp 'croak';
 
@@ -181,7 +181,7 @@ sub install_wrappers ($package) {
         };
 
         my @segments;
-        Hook::LexWrap::wrap(
+        NewFangle::Agent::Wrapper::wrap(
             $fullname => (
                 pre => sub {
                     print STDERR "Calling $fullname\n" if $log_level >= TRACE;
