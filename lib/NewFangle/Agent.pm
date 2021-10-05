@@ -180,7 +180,7 @@ sub install_wrappers ($package) {
             $TX->start_segment( $fullname, '' );
         };
 
-        my @segments;
+        my $segment;
         NewFangle::Agent::Wrapper::wrap(
             $fullname => (
                 pre => sub {
@@ -188,15 +188,14 @@ sub install_wrappers ($package) {
 
                     return unless $Trace && $TX;
 
-                    push @segments, $starter->(@_);
+                    $segment = $starter->(@_);
                 },
                 post => sub {
                     print STDERR "Called $fullname\n" if $log_level >= TRACE;
 
-                    return unless $Trace && $TX;
-
-                    my $segment = pop @segments or return;
-                    $segment->end;
+                    # Since the segment ends on destruction, we can
+                    # undefine it unconditionally. This is always safe
+                    undef $segment;
                 },
             ),
         );

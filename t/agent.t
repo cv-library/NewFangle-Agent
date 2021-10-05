@@ -14,20 +14,14 @@ use NewFangle::Agent;
 
 require Local::Require; # Loaded after the agent
 
-my ( @segments, $i );
-my $tx = mock {} => add => [
-    start_segment => sub {
-        my ( undef, $name, $category ) = @_;
+my @segments;
+package Fake::Segment {
+    sub new     { bless { name => $_[1], category => $_[2] } }
+    sub DESTROY { push @segments => { %{ +shift } } }
+}
 
-        mock {} => add => [
-            end => sub {
-                push @segments => {
-                    name     => $name,
-                    category => $category,
-                };
-            },
-        ];
-    },
+my $tx = mock {} => add => [
+    start_segment => sub { shift; Fake::Segment->new(@_) },
 ];
 
 {
