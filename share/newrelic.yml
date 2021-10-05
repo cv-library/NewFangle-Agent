@@ -57,6 +57,11 @@ log_filename: stdout
 # problem you are experiencing.
 log_level: info
 
+# Set to the host and port number of the New Relic C daemon
+# See https://docs.newrelic.com/docs/agents/c-sdk/get-started/introduction-c-sdk/#architecture
+# for more details.
+# daemon_host: ...
+
 # Distributed tracing lets you see the path that a request takes
 # through your distributed system. Enabling distributed tracing
 # changes the behavior of some New Relic features, so carefully

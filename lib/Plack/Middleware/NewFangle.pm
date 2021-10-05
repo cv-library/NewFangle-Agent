@@ -73,7 +73,8 @@ sub call ( $self, $env ) {
         # Try to initialise a connection to the NewRelic daemon
         # only once to avoid a connection error
         state $init = do {
-            newrelic_init $ENV{NEWRELIC_DAEMON_HOST}, 100
+            die 'Missing host for New Relic daemon' unless $config->{daemon_host};
+            newrelic_init $config->{daemon_host}, 100
         };
 
         $app = NewFangle::App->new( NewFangle::Agent::Config->struct, 100 );

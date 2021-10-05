@@ -116,6 +116,10 @@ Mapped to L<log_level|/log_level>.
 
 Mapped to L<enabled|/enabled>.
 
+=head4 NEWRELIC_DAEMON_HOST
+
+Mapped to L<daemon_host|/daemon_host>.
+
 =head1 FUNCTIONS
 
 =head2 initialize
@@ -215,6 +219,16 @@ increasing order of verbosity:
 If set to an unrecognised value, the value will fall back to the default.
 
 Can be overriden with the C<NEWRELIC_LOG_LEVEL> environment file.
+
+=head2 daemon_host
+
+L<NewFangle> uses the New Relic C SDK, which connects to a daemon that
+aggregates and sends the monitoring data to New Relic. Setting this will
+be required before communication with the daemon. See
+L<the documentation|https://docs.newrelic.com/docs/agents/c-sdk/get-started/introduction-c-sdk/#architecture>
+for more details.
+
+Can be overriden with the C<NEWRELIC_DAEMON_HOST> environment file.
 
 =head2 distributed_tracing
 

@@ -60,6 +60,7 @@ my %environment = (
     NEWRELIC_LOG_FILE    => 'log_filename',
     NEWRELIC_LOG_LEVEL   => 'log_level',
     NEWRELIC_ENABLED     => 'enabled',
+    NEWRELIC_DAEMON_HOST => 'daemon_host',
 );
 
 my $set_log = sub {
