@@ -101,8 +101,8 @@ sub initialize {
     $config = $defaults;
 
     # Merge with config file
-    $config = merge( LoadFile( $args{config_file} ), $config )
-        if $args{config_file};
+    $config = merge( LoadFile( $config_file ), $config )
+        if $config_file;
 
     # Merge with current environment
     if ( $environment ) {
