@@ -94,8 +94,8 @@ sub initialize {
     shift if $_[0] && $_[0] eq __PACKAGE__;
     my %args = @_;
 
-    $args{config_file} //= $ENV{NEWRELIC_CONFIG_FILE};
-    $args{environment} //= $ENV{NEWRELIC_ENVIRONMENT};
+    my $config_file = $ENV{NEWRELIC_CONFIG_FILE} || $args{config_file};
+    my $environment = $ENV{NEWRELIC_ENVIRONMENT} || $args{environment};
 
     # Initialise with defaults
     $config = $defaults;
