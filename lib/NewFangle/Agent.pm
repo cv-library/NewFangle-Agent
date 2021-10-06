@@ -7,7 +7,7 @@ use feature 'state';
 use experimental 'signatures';
 
 use Devel::Peek;
-use Hook::LexWrap;
+use NewFangle::Agent::Wrapper; # As a temporary fork of Hook::LexWrap
 use NewFangle::Agent::Config;
 use Carp 'croak';
 
@@ -180,23 +180,22 @@ sub install_wrappers ($package) {
             $TX->start_segment( $fullname, '' );
         };
 
-        my @segments;
-        Hook::LexWrap::wrap(
+        my $segment;
+        NewFangle::Agent::Wrapper::wrap(
             $fullname => (
                 pre => sub {
                     print STDERR "Calling $fullname\n" if $log_level >= TRACE;
 
                     return unless $Trace && $TX;
 
-                    push @segments, $starter->(@_);
+                    $segment = $starter->(@_);
                 },
                 post => sub {
                     print STDERR "Called $fullname\n" if $log_level >= TRACE;
 
-                    return unless $Trace && $TX;
-
-                    my $segment = pop @segments or return;
-                    $segment->end;
+                    # Since the segment ends on destruction, we can
+                    # undefine it unconditionally. This is always safe
+                    undef $segment;
                 },
             ),
         );

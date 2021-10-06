@@ -1,7 +1,7 @@
 requires 'Devel::Peek';
-requires 'Hook::LexWrap';
 requires 'Scalar::Util';
 requires 'Storable';
+requires 'Syntax::Keyword::Defer';
 requires 'YAML::XS';
 requires 'namespace::clean';
 

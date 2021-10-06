@@ -47,9 +47,9 @@
          },
          "requires" : {
             "Devel::Peek" : "0",
-            "Hook::LexWrap" : "0",
             "Scalar::Util" : "0",
             "Storable" : "0",
+            "Syntax::Keyword::Defer" : "0",
             "YAML::XS" : "0",
             "namespace::clean" : "0",
             "perl" : "v5.20.0"
