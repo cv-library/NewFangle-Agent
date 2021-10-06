@@ -97,7 +97,7 @@ Defaults to false.
 
 If set to a true value, this transaction will be recorded as a non-web
 transaction, either by using the default transaction starters (which uses
-L<start_non_web_transaction|NewFangle::Transaction/start_non_web_transaction>),
+L<start_non_web_transaction|NewFangle::App/start_non_web_transaction>),
 or whatever was specified as C<start_non_web_transaction> when the middleware
 was enabled (see L<above|/Transaction starters>).
 
