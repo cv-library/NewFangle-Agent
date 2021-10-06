@@ -105,10 +105,12 @@ sub initialize {
         if $args{config_file};
 
     # Merge with current environment
-    $config = merge(
-        $config->{environments}{ $args{environment} } // {},
-        $config,
-    ) if $args{environment};
+    if ( $environment ) {
+        my $local = $config->{environments}{ $environment }
+            // croak "The current New Relic environment ($environment) is not defined";
+
+        $config = merge( $local, $config );
+    }
 
     # Merge with environment variables
     while ( my ( $k, $v ) = each %environment ) {
