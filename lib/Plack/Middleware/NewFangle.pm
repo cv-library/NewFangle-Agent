@@ -21,6 +21,8 @@ use Scalar::Util 'weaken';
 
 use namespace::clean;
 
+our $VERSION = '0.001';
+
 my %cache;
 
 sub prepare_app ( $self ) {
