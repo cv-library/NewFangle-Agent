@@ -165,6 +165,7 @@ sub struct {
     }
 
     delete $agent->{enabled};
+    delete $agent->{daemon_host};
 
     delete $tx->{include};
     delete $tx->{exclude};
