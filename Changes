@@ -1,6 +1,6 @@
 Revision history for NewFangle::Agent
 
-{{$NEXT}}
+0.002     2021-10-15 11:31:02+01:00 Europe/London
 
     Fix issues with the conversion between agent and struct config
 

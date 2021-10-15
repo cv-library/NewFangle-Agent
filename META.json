@@ -72,19 +72,19 @@
    "provides" : {
       "NewFangle::Agent" : {
          "file" : "lib/NewFangle/Agent.pm",
-         "version" : "0.001"
+         "version" : "0.002"
       },
       "NewFangle::Agent::Config" : {
          "file" : "lib/NewFangle/Agent/Config.pm",
-         "version" : "0.001"
+         "version" : "0.002"
       },
       "Plack::Middleware::NewFangle" : {
          "file" : "lib/Plack/Middleware/NewFangle.pm",
-         "version" : "0.001"
+         "version" : "0.002"
       }
    },
    "release_status" : "stable",
-   "version" : "0.001",
+   "version" : "0.002",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.034000"
@@ -330,7 +330,7 @@
                   "branch" : null,
                   "changelog" : "Changes",
                   "signed" : 0,
-                  "tag" : "0.001",
+                  "tag" : "0.002",
                   "tag_format" : "%v",
                   "tag_message" : ""
                },
