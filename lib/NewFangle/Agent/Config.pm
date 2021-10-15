@@ -167,6 +167,10 @@ sub struct {
     delete $agent->{enabled};
     delete $agent->{daemon_host};
 
+    # C Struct log levels are narrower
+    $agent->{log_level} = 'error' if $agent->{log_level} eq 'critical';
+    $agent->{log_level} = 'debug' if $agent->{log_level} eq 'trace';
+
     delete $tx->{include};
     delete $tx->{exclude};
 
