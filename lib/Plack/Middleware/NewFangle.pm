@@ -13,6 +13,8 @@ use Plack::Util::Accessor qw(
 
     start_non_web_transaction
       end_non_web_transaction
+
+    error
 );
 
 use NewFangle 'newrelic_init';
@@ -39,7 +41,7 @@ sub prepare_app ( $self ) {
     };
 
     $self->{end_transaction} //= sub ( $tx, $res ) {
-        $tx->add_attribute_int( status => $res->[0] );
+        $tx->add_attribute_int( status => $res->[0] // 500 );
         $tx->end;
     };
 
@@ -49,8 +51,12 @@ sub prepare_app ( $self ) {
     };
 
     $self->{end_non_web_transaction} //= sub ( $tx, $res ) {
-        $tx->add_attribute_int( status => $res->[0] );
+        $tx->add_attribute_int( status => $res->[0] // 500 );
         $tx->end;
+    };
+
+    $self->{error} //= sub ( $tx, $err ) {
+        $tx->notice_error_with_stacktrace( 1, $err, ERROR => $err );
     };
 }
 
@@ -101,11 +107,20 @@ sub call ( $self, $env ) {
 
     my $start = $self->{"start_${web}transaction"};
     my $end   = $self->{  "end_${web}transaction"};
+    my $error = $self->{error};
 
     my $tx = $NewFangle::Agent::TX = $app->$start($env);
     weaken $tx;
 
-    my $res = $self->app->($env);
+    my $res;
+    unless ( eval { $res = $self->app->($env); 1 } ) {
+        my $err = $@;
+
+        $tx->$error( $err );
+        $tx->$end( [500] );
+
+        die $err;
+    }
 
     return Plack::Util::response_cb(
         $res => sub ($res) {

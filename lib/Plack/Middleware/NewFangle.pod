@@ -16,6 +16,8 @@ Plack::Middleware::NewFangle - Unofficial Perl New Relic agent middleware
 
         start_non_web_transaction => sub ($app, $env) { ... },
           end_non_web_transaction => sub ($tx,  $res) { ... },
+
+        error => sub ($tx, $err) { ... },
     );
 
 =head1 DESCRIPTION
@@ -73,6 +75,20 @@ response arrayref as the first and second parameters respectively.
 The ender in C<end_non_web_transaction> will be used if this request
 was started as a background task with C<set_background_task> in the
 Plack environment (see details L<below|/The Plack environment>).
+
+=head3 Error handler
+
+    error => sub ( $tx, $err ) { ... },
+
+If an error is caught during execution of the route, this callback will
+be executed with the transaction, and the error that was returned.
+
+The default value for this callback uses
+L<notice_error_with_stacktrace|NewFangle::Transaction/notice_error_with_stacktrace>
+to attach the error to the transaction.
+
+After executing this callback, the middleware takes care of executing the
+transaction ender, and re-throwing the error for further handling.
 
 =head2 The Plack environment
 
