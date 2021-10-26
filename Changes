@@ -2,6 +2,8 @@ Revision history for NewFangle::Agent
 
 {{$NEXT}}
 
+0.003     2021-10-26 14:31:58 BST
+
     Catch errors in Plack middleware
 
 0.002     2021-10-15 11:31:02+01:00 Europe/London
