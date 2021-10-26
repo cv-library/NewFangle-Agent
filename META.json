@@ -72,39 +72,34 @@
    "provides" : {
       "NewFangle::Agent" : {
          "file" : "lib/NewFangle/Agent.pm",
-         "version" : "0.002"
+         "version" : "0.003"
       },
       "NewFangle::Agent::Config" : {
          "file" : "lib/NewFangle/Agent/Config.pm",
-         "version" : "0.002"
+         "version" : "0.003"
       },
       "Plack::Middleware::NewFangle" : {
          "file" : "lib/Plack/Middleware/NewFangle.pm",
-         "version" : "0.002"
+         "version" : "0.003"
       }
    },
    "release_status" : "stable",
-   "version" : "0.002",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/cv-library/newfangle-agent/issues"
+      },
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com/cv-library/NewFangle-Agent.git",
+         "web" : "https://github.com/cv-library/NewFangle-Agent"
+      }
+   },
+   "version" : "0.003",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.034000"
       },
       "plugins" : [
-         {
-            "class" : "Dist::Zilla::Plugin::NextRelease",
-            "name" : "NextRelease",
-            "version" : "6.024"
-         },
-         {
-            "class" : "Dist::Zilla::Plugin::ReadmeAnyFromPod",
-            "config" : {
-               "Dist::Zilla::Role::FileWatcher" : {
-                  "version" : "0.006"
-               }
-            },
-            "name" : "MarkdownInBuild",
-            "version" : "0.163250"
-         },
          {
             "class" : "Dist::Zilla::Plugin::Git::GatherDir",
             "config" : {
@@ -231,7 +226,7 @@
                   "changelog" : "Changes"
                },
                "Dist::Zilla::Role::Git::Repo" : {
-                  "git_version" : "2.33.0",
+                  "git_version" : "2.33.1",
                   "repo_root" : "."
                }
             },
@@ -313,7 +308,7 @@
                   "changelog" : "Changes"
                },
                "Dist::Zilla::Role::Git::Repo" : {
-                  "git_version" : "2.33.0",
+                  "git_version" : "2.33.1",
                   "repo_root" : "."
                },
                "Dist::Zilla::Role::Git::StringFormatter" : {
@@ -330,12 +325,12 @@
                   "branch" : null,
                   "changelog" : "Changes",
                   "signed" : 0,
-                  "tag" : "0.002",
+                  "tag" : "0.003",
                   "tag_format" : "%v",
                   "tag_message" : ""
                },
                "Dist::Zilla::Role::Git::Repo" : {
-                  "git_version" : "2.33.0",
+                  "git_version" : "2.33.1",
                   "repo_root" : "."
                },
                "Dist::Zilla::Role::Git::StringFormatter" : {
@@ -379,7 +374,7 @@
                   "changelog" : "Changes"
                },
                "Dist::Zilla::Role::Git::Repo" : {
-                  "git_version" : "2.33.0",
+                  "git_version" : "2.33.1",
                   "repo_root" : "."
                },
                "Dist::Zilla::Role::Git::StringFormatter" : {
@@ -447,6 +442,16 @@
             "version" : "6.024"
          },
          {
+            "class" : "Dist::Zilla::Plugin::ReadmeAnyFromPod",
+            "config" : {
+               "Dist::Zilla::Role::FileWatcher" : {
+                  "version" : "0.006"
+               }
+            },
+            "name" : "MarkdownInBuild",
+            "version" : "0.163250"
+         },
+         {
             "class" : "Dist::Zilla::Plugin::MinimumPerl",
             "name" : "MinimumPerl",
             "version" : "1.006"
@@ -457,10 +462,20 @@
             "version" : "0.08"
          },
          {
+            "class" : "Dist::Zilla::Plugin::Repository",
+            "name" : "Repository",
+            "version" : "0.24"
+         },
+         {
+            "class" : "Dist::Zilla::Plugin::Bugtracker",
+            "name" : "Bugtracker",
+            "version" : "1.111080"
+         },
+         {
             "class" : "Dist::Zilla::Plugin::Git::Contributors",
             "config" : {
                "Dist::Zilla::Plugin::Git::Contributors" : {
-                  "git_version" : "2.33.0",
+                  "git_version" : "2.33.1",
                   "include_authors" : 0,
                   "include_releaser" : 1,
                   "order_by" : "name",
