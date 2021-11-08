@@ -139,7 +139,7 @@ This is used to identify the L<NewFangle::App> to use for this transaction.
 =item The result of calling C<struct>
 
 As described above, L<NewFangle::App> objects are created and cached to
-handle individual transactions. The configuration for these is generatedw with
+handle individual transactions. The configuration for these is generated with
 C<struct> in L<NewFangle::Agent::Config|NewFangle::Agent::Config/struct>.
 
 =back

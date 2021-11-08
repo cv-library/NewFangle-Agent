@@ -93,13 +93,13 @@ A configuration file in YAML format and with the same structure as the example
 above can be provided to overwrite these values.
 
 The location of this file will be read from the C<config_file> parameter
-set either during import or when caling L<initialize|/initialize> (see below).
+set either during import or when calling L<initialize|/initialize> (see below).
 
 This value is optional, but if set, it I<must> point to a readable file.
 
 If not set, no configuration file will be read.
 
-The location of this file can be overriden with the C<NEWRELIC_CONFIG_FILE>
+The location of this file can be overridden with the C<NEWRELIC_CONFIG_FILE>
 environment variable.
 
 =head3 New Relic environment
@@ -117,7 +117,7 @@ has been defined.
 
 If not set, no environment data will be read.
 
-The name of the environment can be overriden with the C<NEWRELIC_ENVIRONMENT>
+The name of the environment can be overridden with the C<NEWRELIC_ENVIRONMENT>
 environment variable.
 
 =head3 Environment variables
@@ -193,7 +193,7 @@ by localising the environment variables described above.
 
 Returns a L<NewFangle::Config> object constructed from either the global
 settings (defined at compile time) or the local settings (which can be
-overriden by changes in the environment).
+overridden by changes in the environment).
 
 By default, it will be generated from the local environment.
 
@@ -206,19 +206,19 @@ Boolean, defaults to false.
 If this is set to a false value, the New Relic integration will be disabled
 entirely.
 
-Can be overriden with the C<NEWRELIC_ENABLED> environment variable.
+Can be overridden with the C<NEWRELIC_ENABLED> environment variable.
 
 =head2 app_name
 
 String, must be set.
 
-Can be overriden with the C<NEWRELIC_APP_NAME> environment variable.
+Can be overridden with the C<NEWRELIC_APP_NAME> environment variable.
 
 =head2 license_key
 
 String, must be set.
 
-Can be overriden with the C<NEWRELIC_LICENSE_KEY> environment variable.
+Can be overridden with the C<NEWRELIC_LICENSE_KEY> environment variable.
 
 =head2 log_filename
 
@@ -228,7 +228,7 @@ Should be set to the path of a file to be used for logging. This can be
 set to the special values C<stderr> and C<stdout> to send the logs to
 standard error (the default) and standard output respectively.
 
-Can be overriden with the C<NEWRELIC_LOG_FILE> environment variable.
+Can be overridden with the C<NEWRELIC_LOG_FILE> environment variable.
 
 =head2 log_level
 
@@ -255,7 +255,7 @@ increasing order of verbosity:
 
 If set to an unrecognised value, the value will fall back to the default.
 
-Can be overriden with the C<NEWRELIC_LOG_LEVEL> environment file.
+Can be overridden with the C<NEWRELIC_LOG_LEVEL> environment file.
 
 =head2 daemon_host
 
@@ -265,7 +265,7 @@ be required before communication with the daemon. See
 L<the documentation|https://docs.newrelic.com/docs/agents/c-sdk/get-started/introduction-c-sdk/#architecture>
 for more details.
 
-Can be overriden with the C<NEWRELIC_DAEMON_HOST> environment file.
+Can be overridden with the C<NEWRELIC_DAEMON_HOST> environment file.
 
 =head2 distributed_tracing
 
@@ -274,7 +274,7 @@ Can be overriden with the C<NEWRELIC_DAEMON_HOST> environment file.
 Bool, defaults to C<true>.
 
 Distributed tracing lets you see the path that a request takes through your
-istributed system. Enabling distributed tracing changes the behavior of some
+distributed system. Enabling distributed tracing changes the behaviour of some
 New Relic features, so carefully consult
 L<the transition guide|https://docs.newrelic.com/docs/transition-guide-distributed-tracing>
 before you enable this feature:
@@ -288,7 +288,7 @@ sends this to the UI on a periodic basis.
 
 Bool, defaults to C<true>.
 
-Setting this to a flase value disables transaction traces.
+Setting this to a false value disables transaction traces.
 
 =head3 threshold
 
@@ -332,7 +332,7 @@ Otherwise, this value is ignored.
 =head4 datastore_reporting
 
 When the transaction tracer is on, SQL statements can optionally be recorded.
-Options under this ection control how these are recorded.
+Options under this section control how these are recorded.
 
 =over
 
@@ -355,7 +355,7 @@ strips out numeric and string literals.
 Number, defaults to 0.5.
 
 Specifies the number of seconds above which a datastore query is considered
-"slow", and eligibly for reporting.
+"slow", and eligible for reporting.
 
 =back
 
@@ -444,20 +444,20 @@ other method.
 
 This key can be used to defined several I<environments> that can override
 the rest of the configuration. Common use cases are development, staging,
-production, and testing environments to suiot different needs.
+production, and testing environments to suit different needs.
 
 This should be set to a hash where keys are environment names (eg.
 C<production>) and the value is a hash with the same structure as the
 top-level in the configuration file.
 
-This is etirely optional. If an environment is set, its values will be read
+This is entirely optional. If an environment is set, its values will be read
 during compilation and be merged with those in the main configuration file.
 These will become part of the I<global> configuration.
 
 Setting an environment name that is not defined in the configuration file
 is an error.
 
-This can be overriden with the C<NEWRELIC_ENVIRONMENT> environment variable.
+This can be overridden with the C<NEWRELIC_ENVIRONMENT> environment variable.
 
 =head1 SEE ALSO
 
