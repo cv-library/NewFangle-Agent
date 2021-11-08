@@ -1,4 +1,5 @@
 requires 'Devel::Peek';
+requires 'Hash::Merge';
 requires 'Scalar::Util';
 requires 'Storable';
 requires 'Syntax::Keyword::Defer';
