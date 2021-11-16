@@ -67,7 +67,7 @@ object.
 If `generate_segment_starter` returns an undefined value, a default tracking
 segment will be started instead.
 
-This function can be overriden in subclasses that want to modify the default
+This function can be overridden in subclasses that want to modify the default
 wrapping in NewFangle::Agent, but it is recommended that you still delegate
 to the version shipped to catch any remaining cases.
 

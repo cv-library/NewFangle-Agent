@@ -47,6 +47,7 @@
          },
          "requires" : {
             "Devel::Peek" : "0",
+            "Hash::Merge" : "0",
             "Scalar::Util" : "0",
             "Storable" : "0",
             "Syntax::Keyword::Defer" : "0",
@@ -72,15 +73,15 @@
    "provides" : {
       "NewFangle::Agent" : {
          "file" : "lib/NewFangle/Agent.pm",
-         "version" : "0.003"
+         "version" : "0.004"
       },
       "NewFangle::Agent::Config" : {
          "file" : "lib/NewFangle/Agent/Config.pm",
-         "version" : "0.003"
+         "version" : "0.004"
       },
       "Plack::Middleware::NewFangle" : {
          "file" : "lib/Plack/Middleware/NewFangle.pm",
-         "version" : "0.003"
+         "version" : "0.004"
       }
    },
    "release_status" : "stable",
@@ -94,7 +95,7 @@
          "web" : "https://github.com/cv-library/NewFangle-Agent"
       }
    },
-   "version" : "0.003",
+   "version" : "0.004",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.034000"
@@ -105,9 +106,9 @@
             "config" : {
                "Dist::Zilla::Plugin::GatherDir" : {
                   "exclude_filename" : [
-                     "Build.PL",
                      "LICENSE",
                      "META.json",
+                     "Makefile.PL",
                      "README.md",
                      "cpanfile",
                      "dist.ini"
@@ -259,9 +260,9 @@
             "config" : {
                "Dist::Zilla::Plugin::CopyFilesFromRelease" : {
                   "filename" : [
-                     "Build.PL",
                      "LICENSE",
                      "META.json",
+                     "Makefile.PL",
                      "README.md"
                   ],
                   "match" : []
@@ -297,10 +298,10 @@
                },
                "Dist::Zilla::Role::Git::DirtyFiles" : {
                   "allow_dirty" : [
-                     "Build.PL",
                      "Changes",
                      "LICENSE",
                      "META.json",
+                     "Makefile.PL",
                      "README.md",
                      "dist.ini"
                   ],
@@ -325,7 +326,7 @@
                   "branch" : null,
                   "changelog" : "Changes",
                   "signed" : 0,
-                  "tag" : "0.003",
+                  "tag" : "0.004",
                   "tag_format" : "%v",
                   "tag_message" : ""
                },
