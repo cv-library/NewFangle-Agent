@@ -162,9 +162,8 @@ sub install_wrappers ($package) {
 
             # Skip imported functions.
             # See https://stackoverflow.com/a/3685262/807650
-            if ( my $gv = Devel::Peek::CvGV( \&$coderef ) ) {
-                my $source = *$gv{PACKAGE};
-                if ( $source ne $package ) {
+            if ( my $gv = Devel::Peek::CvGV($coderef) ) {
+                if ( *$gv{PACKAGE} ne $package ) {
                     warn "$package has dirty namespace ($subname)\n" if IS_TRACE;
                     next;
                 }
@@ -317,8 +316,7 @@ sub import {
         };
 
     *CORE::GLOBAL::require = sub ($) {
-        die "wrong number of arguments to require\n"
-            unless @_ == 1;
+        die "wrong number of arguments to require\n" unless @_ == 1;
 
         my ($arg) = @_;
 
