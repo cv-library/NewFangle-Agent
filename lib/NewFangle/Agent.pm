@@ -116,17 +116,31 @@ my $wrap = sub ($filename) {
     # If we are specifically including any subroutine in this
     # package, then we cannot skip it wholesale
     unless ( $include_subroutines->{$package} ) {
-        return
-            # Path not in include path subset
-            if ( $include_paths && $path !~ $include_paths )
-            # Path in exclude path subset
-            || ( $exclude_paths && $path =~ $exclude_paths )
-            # Ignore ourselves
-            || $package =~ /^New(?:Fangle|Relic)/
-            # TODO: Ignore modules that cause infinite recursion
-            || $package =~ /^(?:Test2|B)/
-            # Not a module name
-            || $package =~ /^::/;
+        $include_paths && $path !~ $include_paths and do {
+            warn "Skipping $package because it is not in include paths\n" if IS_TRACE;
+            return;
+        };
+
+        $exclude_paths && $path =~ $exclude_paths and do {
+            warn "Skipping $package because it is in exclude paths\n" if IS_TRACE;
+            return;
+        };
+
+        $package =~ /^New(?:Fangle|Relic)/ and do {
+            warn "Skipping $package because it is ourselves\n" if IS_TRACE;
+            return;
+        };
+
+        # TODO
+        $package =~ /^(?:Test2|B)/ and do {
+            warn "Skipping $package because it is not currently supported\n" if IS_TRACE;
+            return;
+        };
+
+        $package =~ /^::/ and do {
+            warn "Skipping $package because it is not a package\n" if IS_TRACE;
+            return;
+        };
     }
 
     install_wrappers($package);
