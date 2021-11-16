@@ -12,12 +12,22 @@ use NewFangle::Agent::Config;
 use Carp 'croak';
 
 use constant {
-    CRITICAL => 0,
-    ERROR    => 1,
-    WARNING  => 2,
-    INFO     => 3,
-    DEBUG    => 4,
-    TRACE    => 5,
+    CRITICAL  => 0,
+    ERROR     => 1,
+    WARNING   => 2,
+    INFO      => 3,
+    DEBUG     => 4,
+    TRACE     => 5,
+    LOG_LEVEL => NewFangle::Agent::Config->global_settings->{log_level} // 0,
+};
+
+use constant {
+    IS_CRITICAL => LOG_LEVEL >= CRITICAL,
+    IS_ERROR    => LOG_LEVEL >= ERROR,
+    IS_WARNING  => LOG_LEVEL >= WARNING,
+    IS_INFO     => LOG_LEVEL >= INFO,
+    IS_DEBUG    => LOG_LEVEL >= DEBUG,
+    IS_TRACE    => LOG_LEVEL >= TRACE,
 };
 
 use namespace::clean;
@@ -31,7 +41,6 @@ my (
     $exclude_subroutines, # Excluded subroutines. Keys are package names
     $include_subpackages, # Included subpackages. Keys are package names
     $exclude_subpackages, # Excluded subpackages. Keys are package names
-    $log_level,           # The verbosity of the code
 );
 
 our $TX;    # The current NewFangle transaction
@@ -50,7 +59,7 @@ my $parse_includes = sub {
         $paths = '^(:?' . join( '|', map quotemeta, @list ) . ')';
         $paths = qr/$paths/;
 
-        if ( $log_level >= DEBUG ) {
+        if ( IS_DEBUG ) {
             warn ucfirst($type) . " paths:\n";
             warn "- $_\n" for @list;
         }
@@ -61,7 +70,7 @@ my $parse_includes = sub {
             @{ $subroutines->{$k} }{ @$v } = 1;
         }
 
-        if ( $log_level >= DEBUG ) {
+        if ( IS_DEBUG ) {
             warn ucfirst($type) . " subroutines:\n";
             for my $k ( sort keys %{ $subroutines } ) {
                 warn "- ${k}::$_\n" for sort keys %{ $subroutines->{$k} };
@@ -74,7 +83,7 @@ my $parse_includes = sub {
             @{ $subpackages->{$k} }{ @$v } = 1;
         }
 
-        if ( $log_level >= DEBUG ) {
+        if ( IS_DEBUG ) {
             warn ucfirst($type) . " subpackages:\n";
             for my $k ( sort keys %{ $subpackages } ) {
                 warn "- ${k}:\n";
@@ -135,7 +144,7 @@ sub install_wrappers ($package) {
         # If we are explicitly including this subroutine
         # none of the other checks matter
         if ( $include_subroutines->{$package}{$subname} ) {
-            warn "Including $fullname explicitly" if $log_level >= TRACE;
+            warn "Including $fullname explicitly" if IS_TRACE;
         }
         else {
             # Otherwise, perform all other additional checks
@@ -156,17 +165,13 @@ sub install_wrappers ($package) {
             if ( my $gv = Devel::Peek::CvGV( \&$coderef ) ) {
                 my $source = *$gv{PACKAGE};
                 if ( $source ne $package ) {
-                    warn "$package has dirty namespace ($subname)\n"
-                        if $log_level >= TRACE;
-
+                    warn "$package has dirty namespace ($subname)\n" if IS_TRACE;
                     next;
                 }
             }
 
             if ( defined prototype $coderef ) {
-                warn "Not wrapping $fullname because it has a prototype\n"
-                    if $log_level >= TRACE;
-
+                warn "Not wrapping $fullname because it has a prototype\n" if IS_TRACE;
                 next;
             }
         }
@@ -184,14 +189,14 @@ sub install_wrappers ($package) {
         NewFangle::Agent::Wrapper::wrap(
             $fullname => (
                 pre => sub {
-                    print STDERR "Calling $fullname\n" if $log_level >= TRACE;
+                    print STDERR "Calling $fullname\n" if IS_TRACE;
 
                     return unless $Trace && $TX;
 
                     $segment = $starter->(@_);
                 },
                 post => sub {
-                    print STDERR "Called $fullname\n" if $log_level >= TRACE;
+                    print STDERR "Called $fullname\n" if IS_TRACE;
 
                     # Since the segment ends on destruction, we can
                     # undefine it unconditionally. This is always safe
@@ -200,7 +205,7 @@ sub install_wrappers ($package) {
             ),
         );
 
-        warn "Wrapped $fullname\n" if $log_level >= TRACE;
+        warn "Wrapped $fullname\n" if IS_TRACE;
     }
 }
 
@@ -277,9 +282,7 @@ sub import {
     return unless $config->{enabled}
         && $config->{transaction_tracer}{enabled};
 
-    $log_level = $config->{log_level} // 0;
-
-    if ( $log_level >= DEBUG ) {
+    if ( IS_DEBUG ) {
         print STDERR "Loading New Relic agent\n";
         print STDERR "See https://github.com/cv-library/NewFangle-Agent for details\n";
     }
