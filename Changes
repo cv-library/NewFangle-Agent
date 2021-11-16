@@ -7,6 +7,7 @@ Revision history for NewFangle::Agent
     * Trace logging is more explicit about packages that have been skipped
     * XSLoader, Plack, and Exporter are added to the list of packages
       we always skip. This was causing issues in some applications
+    * Add tests for config manager
 
 0.003     2021-10-26 14:31:58 BST
 

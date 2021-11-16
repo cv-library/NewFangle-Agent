@@ -7,3 +7,7 @@ transaction_tracer:
     include:
         paths:
             - t/lib
+
+environments:
+    environment:
+        license_key: eu01xxdeadbeefdeadbeefdeadbeefdeadbeNRAL
