@@ -132,7 +132,7 @@ my $wrap = sub ($filename) {
         };
 
         # TODO
-        $package =~ /^(?:Test2|B)/ and do {
+        $package =~ /^(?:B|Exporter|Test2|Plack|XSLoader)(?:::|$)/ and do {
             warn "Skipping $package because it is not currently supported\n" if IS_TRACE;
             return;
         };
