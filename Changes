@@ -8,6 +8,7 @@ Revision history for NewFangle::Agent
     * XSLoader, Plack, and Exporter are added to the list of packages
       we always skip. This was causing issues in some applications
     * Add tests for config manager
+    * Fix segment starter for LWP::UserAgent::request
 
 0.003     2021-10-26 14:31:58 BST
 

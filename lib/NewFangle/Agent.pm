@@ -235,8 +235,8 @@ sub generate_segment_starter ( $package, $subname ) {
 
     return sub {
         $TX->start_external_segment([
-            "$_[0]->url" =~ s/\?.*//r, # URL minus query parameters
-            uc $_[0]->method,
+            "$_[1]->url" =~ s/\?.*//r, # URL minus query parameters
+            uc $_[1]->method,
             $package,
         ]);
     } if $fullname eq 'LWP::UserAgent::request';
