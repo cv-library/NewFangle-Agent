@@ -2,6 +2,8 @@ Revision history for NewFangle::Agent
 
 {{$NEXT}}
 
+0.004     2021-11-17 16:24:48 GMT
+
     * Add a missing dependency on Hash::Merge
     * Log level checks are now done at compile time for performance
     * Trace logging is more explicit about packages that have been skipped
