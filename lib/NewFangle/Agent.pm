@@ -46,7 +46,7 @@ my (
 our $TX;    # The current NewFangle transaction
 our $Trace; # Should this be traced
 
-our $VERSION = '0.004';
+our $VERSION = '0.005';
 
 my $parse_includes = sub {
     my ( $type, $config ) = @_;
