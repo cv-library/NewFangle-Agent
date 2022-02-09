@@ -1,12 +1,12 @@
 requires 'Devel::Peek';
 requires 'Hash::Merge';
+requires 'NewFangle';
 requires 'Scalar::Util';
 requires 'Storable';
 requires 'Syntax::Keyword::Defer';
 requires 'YAML::XS';
 requires 'namespace::clean';
 
-recommends 'NewFangle';
 recommends 'Plack';
 
 on test => sub {
