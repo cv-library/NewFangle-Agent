@@ -2,6 +2,9 @@ Revision history for NewFangle::Agent
 
 {{$NEXT}}
 
+    * Clarified that the daemon host configuration key requires a
+      host:port pair
+
 0.004     2021-11-17 16:24:48 GMT
 
     * Add a missing dependency on Hash::Merge

@@ -260,8 +260,8 @@ Can be overridden with the C<NEWRELIC_LOG_LEVEL> environment file.
 =head2 daemon_host
 
 L<NewFangle> uses the New Relic C SDK, which connects to a daemon that
-aggregates and sends the monitoring data to New Relic. Setting this will
-be required before communication with the daemon. See
+aggregates and sends the monitoring data to New Relic. This key must be set to
+a C<host:port> stanza before communication with the daemon is possible. See
 L<the documentation|https://docs.newrelic.com/docs/agents/c-sdk/get-started/introduction-c-sdk/#architecture>
 for more details.
 
