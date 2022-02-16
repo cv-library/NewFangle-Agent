@@ -51,7 +51,7 @@ When enabled, the following options are allowed:
     start_non_web_transaction => sub ( $app, $env ) { ... },
 
 These will be used to start the transactions at the beginning of each request.
-They must be set to code references which must return a
+They can be optionally set to code references which must return a
 L<NewFangle::Transaction> object for the current transaction.
 
 The code references will receive the L<NewFangle::App> and the L<Plack>
@@ -59,7 +59,14 @@ environment as the first and second parameters, respectively.
 
 The starter in C<start_non_web_transaction> will be used if this request
 has been marked as a background task with C<set_background_task> in the
-Plack environment (see details L<below|/The Plack environment>).
+environment (see details L<below|/The Plack environment>).
+
+The default transaction starters will generate the transaction name from the
+request URI (without any query parameters). It will also set a couple of
+additional fields on the transaction, including "method" and "host" (from
+the C<REQUEST_METHOD> and C<HTTP_HOST> keys in in the Plack environment).
+See the L</CAVEATS> section below for possible issues with the default
+handlers and how to mitigate them.
 
 =head3 Transaction enders
 
@@ -143,6 +150,19 @@ handle individual transactions. The configuration for these is generated with
 C<struct> in L<NewFangle::Agent::Config|NewFangle::Agent::Config/struct>.
 
 =back
+
+=head1 CAVEATS
+
+=head2 URLs with placeholders not grouped
+
+By default, the transactions generated will be named with the URL of the
+request that is being processed. Although this works well in principle,
+URLs that have placeholders in them (eg. document or client IDs, etc) will
+be treated as independent requests. In other words, they will I<not> be
+grouped as different variations on a single "type" of request.
+
+As a workaround, the transaction name can be modified after creation with
+L<NewFangle::Transaction::set_name|NewFangle::Transaction/set_name>.
 
 =head1 SEE ALSO
 
