@@ -2,6 +2,8 @@ Revision history for NewFangle::Agent
 
 {{$NEXT}}
 
+    * Added transaction_name as a recognised value in the Plack
+      environment to override transaction names.
     * Noted possible issues with transaction grouping in the documentation
       for the Plack middleware.
     * Marked NewFangle as a required module, not just recommended

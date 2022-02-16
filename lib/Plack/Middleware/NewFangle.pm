@@ -30,9 +30,10 @@ my %cache;
 sub prepare_app ( $self ) {
     # This does not include the query parameters to avoid PII
     $self->{start_transaction} //= sub ( $app, $env ) {
-        my $name = $env->{REQUEST_URI} =~ s/\?.*//r;
-
-        my $tx = $app->start_web_transaction($name);
+        my $tx = $app->start_web_transaction(
+               $env->{newrelic}{transaction_name}
+            // $env->{REQUEST_URI} =~ s/\?.*//r,
+        );
 
         $tx->add_attribute_string( host   => $env->{HTTP_HOST} );
         $tx->add_attribute_string( method => $env->{REQUEST_METHOD} );
@@ -46,8 +47,10 @@ sub prepare_app ( $self ) {
     };
 
     $self->{start_non_web_transaction} //= sub ( $app, $env ) {
-        my $name = $env->{REQUEST_URI} =~ s/\?.*//r;
-        $app->start_non_web_transaction($name);
+        $app->start_non_web_transaction(
+               $env->{newrelic}{transaction_name}
+            // $env->{REQUEST_URI} =~ s/\?.*//r
+        );
     };
 
     $self->{end_non_web_transaction} //= sub ( $tx, $res ) {

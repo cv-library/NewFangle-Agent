@@ -62,11 +62,12 @@ has been marked as a background task with C<set_background_task> in the
 environment (see details L<below|/The Plack environment>).
 
 The default transaction starters will generate the transaction name from the
-request URI (without any query parameters). It will also set a couple of
-additional fields on the transaction, including "method" and "host" (from
-the C<REQUEST_METHOD> and C<HTTP_HOST> keys in in the Plack environment).
-See the L</CAVEATS> section below for possible issues with the default
-handlers and how to mitigate them.
+C<transaction_name> key in the environment if that is set
+(see L<below|/The Plack environment>) or from the request URI (without any
+query parameters). It will also set a couple of additional fields on the
+transaction, including "method" and "host" (from the C<REQUEST_METHOD>
+and C<HTTP_HOST> keys in in the Plack environment). See the L</CAVEATS> section
+below for possible issues with the default handlers and how to mitigate them.
 
 =head3 Transaction enders
 
@@ -109,12 +110,12 @@ If set to a true value, this transaction will not be reported to New Relic.
 
 Defaults to false.
 
-=head3 suppress_transaction_trace
+=head3 transaction_name
 
-If set to a true value, no transaction trace will be generated for this
-transaction, even if it would otherwise be eligible for it.
+If set, this will be used as the transaction name by the default transaction
+starter.
 
-Defaults to false.
+Not set by default.
 
 =head3 set_background_task
 
@@ -123,6 +124,13 @@ transaction, either by using the default transaction starters (which uses
 L<start_non_web_transaction|NewFangle::App/start_non_web_transaction>),
 or whatever was specified as C<start_non_web_transaction> when the middleware
 was enabled (see L<above|/Transaction starters>).
+
+Defaults to false.
+
+=head3 suppress_transaction_trace
+
+If set to a true value, no transaction trace will be generated for this
+transaction, even if it would otherwise be eligible for it.
 
 Defaults to false.
 
@@ -161,7 +169,10 @@ URLs that have placeholders in them (eg. document or client IDs, etc) will
 be treated as independent requests. In other words, they will I<not> be
 grouped as different variations on a single "type" of request.
 
-As a workaround, the transaction name can be modified after creation with
+If the C<transaction_name> field is set in the Plack environment
+(see L<above|/Transaction starters>), this will be used instead to name the
+transaction on creation. Alternatively, the transaction name can be modified
+after creation with
 L<NewFangle::Transaction::set_name|NewFangle::Transaction/set_name>.
 
 =head1 SEE ALSO
