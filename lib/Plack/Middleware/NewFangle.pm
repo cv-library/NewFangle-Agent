@@ -31,8 +31,7 @@ sub prepare_app ( $self ) {
     # This does not include the query parameters to avoid PII
     $self->{start_transaction} //= sub ( $app, $env ) {
         my $tx = $app->start_web_transaction(
-               $env->{newrelic}{transaction_name}
-            // $env->{REQUEST_URI} =~ s/\?.*//r,
+            $env->{REQUEST_URI} =~ s/\?.*//r,
         );
 
         $tx->add_attribute_string( host   => $env->{HTTP_HOST} );
@@ -41,20 +40,21 @@ sub prepare_app ( $self ) {
         $tx;
     };
 
-    $self->{end_transaction} //= sub ( $tx, $res ) {
+    $self->{end_transaction} //= sub ( $tx, $res, $env ) {
         $tx->add_attribute_int( status => $res->[0] // 500 );
+        $tx->set_name($env->{newrelic}{transaction_name}) if $env->{newrelic}{transaction_name};
         $tx->end;
     };
 
     $self->{start_non_web_transaction} //= sub ( $app, $env ) {
         $app->start_non_web_transaction(
-               $env->{newrelic}{transaction_name}
-            // $env->{REQUEST_URI} =~ s/\?.*//r
+            $env->{REQUEST_URI} =~ s/\?.*//r
         );
     };
 
-    $self->{end_non_web_transaction} //= sub ( $tx, $res ) {
+    $self->{end_non_web_transaction} //= sub ( $tx, $res, $env ) {
         $tx->add_attribute_int( status => $res->[0] // 500 );
+        $tx->set_name($env->{newrelic}{transaction_name}) if $env->{newrelic}{transaction_name};
         $tx->end;
     };
 
@@ -120,7 +120,7 @@ sub call ( $self, $env ) {
         my $err = $@;
 
         $tx->$error( $err );
-        $tx->$end( [500] );
+        $tx->$end( [500], $env );
 
         die $err;
     }
@@ -128,7 +128,7 @@ sub call ( $self, $env ) {
     return Plack::Util::response_cb(
         $res => sub ($res) {
             return unless $tx;
-            $tx->$end($res);
+            $tx->$end( $res, $env );
         }
     );
 }
