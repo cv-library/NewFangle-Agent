@@ -11,11 +11,11 @@ Plack::Middleware::NewFangle - Unofficial Perl New Relic agent middleware
 
     # Or customise
     enable NewFangle => (
-        start_transaction => sub ($app, $env) { ... },
-          end_transaction => sub ($tx,  $res) { ... },
+        start_transaction => sub ($app, $env)      { ... },
+          end_transaction => sub ($tx, $res, $env) { ... },
 
-        start_non_web_transaction => sub ($app, $env) { ... },
-          end_non_web_transaction => sub ($tx,  $res) { ... },
+        start_non_web_transaction => sub ($app, $env)      { ... },
+          end_non_web_transaction => sub ($tx, $res, $env) { ... },
 
         error => sub ($tx, $err) { ... },
     );
@@ -62,27 +62,32 @@ has been marked as a background task with C<set_background_task> in the
 environment (see details L<below|/The Plack environment>).
 
 The default transaction starters will generate the transaction name from the
-C<transaction_name> key in the environment if that is set
-(see L<below|/The Plack environment>) or from the request URI (without any
-query parameters). It will also set a couple of additional fields on the
-transaction, including "method" and "host" (from the C<REQUEST_METHOD>
+from the request URI (without any query parameters), although this value will
+be overridden by the default transaction enders in certain circumstances (see
+L<below|/Transaction enders>). It will also set a couple of additional fields
+on the transaction, including "method" and "host" (from the C<REQUEST_METHOD>
 and C<HTTP_HOST> keys in in the Plack environment). See the L</CAVEATS> section
 below for possible issues with the default handlers and how to mitigate them.
 
 =head3 Transaction enders
 
-    end_transaction         => sub ( $tx, $res ) { ... },
-    end_non_web_transaction => sub ( $tx, $res ) { ... },
+    end_transaction         => sub ( $tx, $res, $env ) { ... },
+    end_non_web_transaction => sub ( $tx, $res, $env ) { ... },
 
 These will be used to end the transaction at the end of each request.
 They must be set to code references, which will be called in sink context.
 
-The code references will receive the L<NewFangle::Transaction> and the L<Plack>
-response arrayref as the first and second parameters respectively.
+The code references will receive the L<NewFangle::Transaction>, the L<Plack>
+response arrayref, and the L<Plack> environment as the first, second, and third
+parameters respectively.
 
 The ender in C<end_non_web_transaction> will be used if this request
 was started as a background task with C<set_background_task> in the
 Plack environment (see details L<below|/The Plack environment>).
+
+The default transaction enders will override the transaction name from the
+C<transaction_name> key in the environment if that is set
+(see L<below|/The Plack environment>)
 
 =head3 Error handler
 
@@ -113,7 +118,9 @@ Defaults to false.
 =head3 transaction_name
 
 If set, this will be used as the transaction name by the default transaction
-starter.
+ender, overwritting the default value set by the starters (including any value
+set explicitly by
+L<NewFangle::Transaction::set_name|NewFangle::Transaction/set_name>).
 
 Not set by default.
 
@@ -170,10 +177,8 @@ be treated as independent requests. In other words, they will I<not> be
 grouped as different variations on a single "type" of request.
 
 If the C<transaction_name> field is set in the Plack environment
-(see L<above|/Transaction starters>), this will be used instead to name the
-transaction on creation. Alternatively, the transaction name can be modified
-after creation with
-L<NewFangle::Transaction::set_name|NewFangle::Transaction/set_name>.
+(see L<above|/Transaction enders>), this will be used instead to name the
+transaction before it ends.
 
 =head1 SEE ALSO
 

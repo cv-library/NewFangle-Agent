@@ -12,4 +12,5 @@ recommends 'Plack';
 on test => sub {
     requires 'File::Share';
     requires 'Test2::Suite';
+    recommends 'Plack::Middleware::ForceEnv';
 };
