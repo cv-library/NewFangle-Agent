@@ -9,6 +9,8 @@ Revision history for NewFangle::Agent
     * Marked NewFangle as a required module, not just recommended
     * Clarified that the daemon host configuration key requires a
       host:port pair
+    * Add tests for middleware
+    * Pass env as additional parameter to default enders
 
 0.004     2021-11-17 16:24:48 GMT
 
