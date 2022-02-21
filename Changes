@@ -2,6 +2,8 @@ Revision history for NewFangle::Agent
 
 {{$NEXT}}
 
+0.005     2022-02-21 10:09:23 GMT
+
     * Added transaction_name as a recognised value in the Plack
       environment to override transaction names.
     * Noted possible issues with transaction grouping in the documentation

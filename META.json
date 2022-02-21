@@ -42,12 +42,12 @@
       },
       "runtime" : {
          "recommends" : {
-            "NewFangle" : "0",
             "Plack" : "0"
          },
          "requires" : {
             "Devel::Peek" : "0",
             "Hash::Merge" : "0",
+            "NewFangle" : "0",
             "Scalar::Util" : "0",
             "Storable" : "0",
             "Syntax::Keyword::Defer" : "0",
@@ -58,7 +58,8 @@
       },
       "test" : {
          "recommends" : {
-            "CPAN::Meta" : "2.120900"
+            "CPAN::Meta" : "2.120900",
+            "Plack::Middleware::ForceEnv" : "0"
          },
          "requires" : {
             "ExtUtils::MakeMaker" : "0",
@@ -73,15 +74,15 @@
    "provides" : {
       "NewFangle::Agent" : {
          "file" : "lib/NewFangle/Agent.pm",
-         "version" : "0.004"
+         "version" : "0.005"
       },
       "NewFangle::Agent::Config" : {
          "file" : "lib/NewFangle/Agent/Config.pm",
-         "version" : "0.004"
+         "version" : "0.005"
       },
       "Plack::Middleware::NewFangle" : {
          "file" : "lib/Plack/Middleware/NewFangle.pm",
-         "version" : "0.004"
+         "version" : "0.005"
       }
    },
    "release_status" : "stable",
@@ -95,10 +96,10 @@
          "web" : "https://github.com/cv-library/NewFangle-Agent"
       }
    },
-   "version" : "0.004",
+   "version" : "0.005",
    "x_Dist_Zilla" : {
       "perl" : {
-         "version" : "5.034000"
+         "version" : "5.030000"
       },
       "plugins" : [
          {
@@ -227,7 +228,7 @@
                   "changelog" : "Changes"
                },
                "Dist::Zilla::Role::Git::Repo" : {
-                  "git_version" : "2.33.1",
+                  "git_version" : "2.25.1",
                   "repo_root" : "."
                }
             },
@@ -309,7 +310,7 @@
                   "changelog" : "Changes"
                },
                "Dist::Zilla::Role::Git::Repo" : {
-                  "git_version" : "2.33.1",
+                  "git_version" : "2.25.1",
                   "repo_root" : "."
                },
                "Dist::Zilla::Role::Git::StringFormatter" : {
@@ -326,12 +327,12 @@
                   "branch" : null,
                   "changelog" : "Changes",
                   "signed" : 0,
-                  "tag" : "0.004",
+                  "tag" : "0.005",
                   "tag_format" : "%v",
                   "tag_message" : ""
                },
                "Dist::Zilla::Role::Git::Repo" : {
-                  "git_version" : "2.33.1",
+                  "git_version" : "2.25.1",
                   "repo_root" : "."
                },
                "Dist::Zilla::Role::Git::StringFormatter" : {
@@ -375,7 +376,7 @@
                   "changelog" : "Changes"
                },
                "Dist::Zilla::Role::Git::Repo" : {
-                  "git_version" : "2.33.1",
+                  "git_version" : "2.25.1",
                   "repo_root" : "."
                },
                "Dist::Zilla::Role::Git::StringFormatter" : {
@@ -425,7 +426,7 @@
                   "meta_noindex" : 1
                },
                "Dist::Zilla::Role::ModuleMetadata" : {
-                  "Module::Metadata" : "1.000037",
+                  "Module::Metadata" : "1.000036",
                   "version" : "0.006"
                }
             },
@@ -476,7 +477,7 @@
             "class" : "Dist::Zilla::Plugin::Git::Contributors",
             "config" : {
                "Dist::Zilla::Plugin::Git::Contributors" : {
-                  "git_version" : "2.33.1",
+                  "git_version" : "2.25.1",
                   "include_authors" : 0,
                   "include_releaser" : 1,
                   "order_by" : "name",
@@ -556,10 +557,11 @@
       }
    },
    "x_contributors" : [
-      "Jos\u00e9 Joaqu\u00edn Atria <jjatria@gmail.com>"
+      "Jos\u00e9 Joaqu\u00edn Atria <jjatria@gmail.com>",
+      "Owen Allsopp <owen@allsopp.me>"
    ],
-   "x_generated_by_perl" : "v5.34.0",
-   "x_serialization_backend" : "Cpanel::JSON::XS version 4.26",
+   "x_generated_by_perl" : "v5.30.0",
+   "x_serialization_backend" : "Cpanel::JSON::XS version 4.27",
    "x_spdx_expression" : "Artistic-1.0-Perl OR GPL-1.0-or-later"
 }
 
