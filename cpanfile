@@ -1,3 +1,4 @@
+requires 'Class::Load';
 requires 'Devel::Peek';
 requires 'Hash::Merge';
 requires 'NewFangle';

@@ -51,28 +51,19 @@ this includes
 
     Will start a [datastore segment](https://metacpan.org/pod/NewFangle%3A%3ATransaction#start_datastore_segment).
 
-The code that starts these segments is generated with the `generate_segment_starter`
-function, described in more detail [below](#generate_segment_starter).
+The code for each segment is packaged under the `NewFangle::Agent::SegmentStarter::`
+namespace. For example, [HTTP::Tiny](https://metacpan.org/pod/HTTP%3A%3ATiny) is under
+[NewFangle::Agent::SegmentStarter::HTTP::Tiny](https://metacpan.org/pod/NewFangle%3A%3AAgent%3A%3ASegmentStarter%3A%3AHTTP%3A%3ATiny) namespace.
+
+To override the default monitoring segment for a particular function, create a
+class with an appropriate name and implement the `build` function. See the
+following packages for an example implementation:
+
+- [NewFangle::Agent::SegmentStarter::HTTP::Tiny](https://metacpan.org/pod/NewFangle%3A%3AAgent%3A%3ASegmentStarter%3A%3AHTTP%3A%3ATiny)
+- [NewFangle::Agent::SegmentStarter::LWP::UserAgent](https://metacpan.org/pod/NewFangle%3A%3AAgent%3A%3ASegmentStarter%3A%3ALWP%3A%3AUserAgent)
+- [NewFangle::Agent::SegmentStarter::DBI::st](https://metacpan.org/pod/NewFangle%3A%3AAgent%3A%3ASegmentStarter%3A%3ADBI%3A%3Ast)
 
 # FUNCTIONS
-
-## generate\_segment\_starter
-
-    $coderef = NewFangle::Agent::generate_segment_starter( $package, $subname );
-
-Returns a code ref that will be called whenever the specified subroutine is
-called. The code reference should _always_ return a [NewFangle::Segment](https://metacpan.org/pod/NewFangle%3A%3ASegment)
-object.
-
-If `generate_segment_starter` returns an undefined value, a default tracking
-segment will be started instead.
-
-This function can be overridden in subclasses that want to modify the default
-wrapping in NewFangle::Agent, but it is recommended that you still delegate
-to the version shipped to catch any remaining cases.
-
-See ["Adjusting the monitoring segments"](#adjusting-the-monitoring-segments) above for a discussion of this
-process.
 
 ## install\_wrappers
 
