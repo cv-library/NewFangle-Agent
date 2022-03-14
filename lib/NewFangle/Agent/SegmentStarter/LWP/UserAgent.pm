@@ -6,7 +6,7 @@ use experimental 'signatures';
 
 use namespace::clean;
 
-our $VERSION = '0.006';
+our $VERSION = '0.007';
 
 sub build ( $class, $method ) {
     return sub {

@@ -4,7 +4,7 @@ use warnings;
 package
     NewFangle::Agent::Wrapper;
 
-our $VERSION = '0.006';
+our $VERSION = '0.007';
 
 use Carp ();
 use Syntax::Keyword::Defer;

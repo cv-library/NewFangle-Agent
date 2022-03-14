@@ -14,7 +14,7 @@ use Carp 'croak';
 
 use namespace::clean;
 
-our $VERSION = '0.006';
+our $VERSION = '0.007';
 
 my ( $config );
 
