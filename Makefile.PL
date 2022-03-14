@@ -27,6 +27,7 @@ my %WriteMakefileArgs = (
   "MIN_PERL_VERSION" => "5.020000",
   "NAME" => "NewFangle::Agent",
   "PREREQ_PM" => {
+    "Class::Load" => 0,
     "Devel::Peek" => 0,
     "Hash::Merge" => 0,
     "NewFangle" => 0,
@@ -51,6 +52,7 @@ my %WriteMakefileArgs = (
 
 
 my %FallbackPrereqs = (
+  "Class::Load" => 0,
   "Devel::Peek" => 0,
   "ExtUtils::MakeMaker" => 0,
   "File::Share" => 0,

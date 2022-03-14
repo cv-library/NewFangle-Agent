@@ -3,10 +3,10 @@ package NewFangle::Agent;
 
 use strict;
 use warnings;
-use feature 'state';
 use experimental 'signatures';
 
 use Devel::Peek;
+use Class::Load 'load_optional_class';
 use NewFangle::Agent::Wrapper; # As a temporary fork of Hook::LexWrap
 use NewFangle::Agent::Config;
 use Carp 'croak';
@@ -191,12 +191,16 @@ sub install_wrappers ($package) {
 
         $wrapped{$fullname} = 1;
 
-        my $starter = generate_segment_starter( $package, $subname );
-        $starter //= sub {
-            #                      category
-            #                              \
-            $TX->start_segment( $fullname, '' );
-        };
+        my $starter;
+        {
+            my $class = qq{NewFangle::Agent::SegmentStarter::$package};
+            if ( load_optional_class $class ) {
+                my $sub = $class->can('build')
+                    or die "$class does not implement build";
+                $starter = $class->$sub($subname);
+            }
+        }
+        $starter //= sub { $TX->start_segment( $fullname, '' ) };
 
         my $segment;
         NewFangle::Agent::Wrapper::wrap(
@@ -220,64 +224,6 @@ sub install_wrappers ($package) {
 
         warn "Wrapped $fullname\n" if IS_TRACE;
     }
-}
-
-sub generate_segment_starter ( $package, $subname ) {
-    my $fullname = "${package}::${subname}";
-
-    return sub {
-        $TX->start_external_segment([
-            "$_[1]" =~ s/\?.*//r, # URL minus query parameters
-            uc $_[0],
-            $package,
-        ]);
-    } if $fullname eq 'HTTP::Tiny::request';
-
-    return sub {
-        $TX->start_external_segment([
-            "$_[1]->url" =~ s/\?.*//r, # URL minus query parameters
-            uc $_[1]->method,
-            $package,
-        ]);
-    } if $fullname eq 'LWP::UserAgent::request';
-
-    return sub {
-        my ($sth) = @_;
-        my $dbh   = $sth->{Database};
-        my $name  = $dbh->{Name};
-
-        state %meta;
-
-        my $info = $meta{$name} //= do {
-            my %meta = ( driver => $dbh->{Driver}{Name} );
-
-            ( $meta{host}     ) = $name =~     /host=([^;]+)/;
-            ( $meta{database} ) = $name =~ /database=([^;]+)/;
-
-            \%meta;
-        };
-
-        # Driver-specific metadata
-        my $collection;
-        if ( $info->{driver} eq 'MySQL' ) {
-            $collection = join ',', @{ $sth->{mysql_table} };
-        }
-
-        my $statement = $sth->{Statement};
-        my ($operation) = $statement =~ /^\W*?(\S+)/;
-
-        return $TX->start_datastore_segment([
-            $info->{driver}   // '',
-            $collection       // '',
-            $operation        // '',
-            $info->{host}     // '',
-            $info->{path}     // '',
-            $info->{database} // '',
-            $statement        // '',
-        ]);
-    } if $fullname eq 'DBI::st::execute';
-
-    return;
 }
 
 sub import {

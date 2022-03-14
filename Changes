@@ -2,6 +2,14 @@ Revision history for NewFangle::Agent
 
 {{$NEXT}}
 
+    * Refactored segment starters into packages under the
+      NewFangle::Agent::SegmentStarter:: namespace
+    * Removed references to NewFangle::Agent::generate_segment_starter
+      from documentation, because creating packages under
+      NewFangle::Agent::SegmentStarter:: namespace is the only supported way to
+      add monitoring segments
+    * Added Class::Load as a dependency
+
 0.005     2022-02-21 10:09:23 GMT
 
     * Added transaction_name as a recognised value in the Plack

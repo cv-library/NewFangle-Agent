@@ -57,28 +57,25 @@ Will start a L<datastore segment|NewFangle::Transaction/start_datastore_segment>
 
 =back
 
-The code that starts these segments is generated with the C<generate_segment_starter>
-function, described in more detail L<below|/generate_segment_starter>.
+The code for each segment is packaged under the C<NewFangle::Agent::SegmentStarter::>
+namespace. For example, L<HTTP::Tiny> is under
+L<NewFangle::Agent::SegmentStarter::HTTP::Tiny> namespace.
+
+To override the default monitoring segment for a particular function, create a
+class with an appropriate name and implement the C<build> function. See the
+following packages for an example implementation:
+
+=over
+
+=item * L<NewFangle::Agent::SegmentStarter::HTTP::Tiny>
+
+=item * L<NewFangle::Agent::SegmentStarter::LWP::UserAgent>
+
+=item * L<NewFangle::Agent::SegmentStarter::DBI::st>
+
+=back
 
 =head1 FUNCTIONS
-
-=head2 generate_segment_starter
-
-    $coderef = NewFangle::Agent::generate_segment_starter( $package, $subname );
-
-Returns a code ref that will be called whenever the specified subroutine is
-called. The code reference should I<always> return a L<NewFangle::Segment>
-object.
-
-If C<generate_segment_starter> returns an undefined value, a default tracking
-segment will be started instead.
-
-This function can be overridden in subclasses that want to modify the default
-wrapping in NewFangle::Agent, but it is recommended that you still delegate
-to the version shipped to catch any remaining cases.
-
-See L</Adjusting the monitoring segments> above for a discussion of this
-process.
 
 =head2 install_wrappers
 
