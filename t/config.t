@@ -37,7 +37,7 @@ $global->{app_name} = 'Fake name';
 is +NewFangle::Agent::Config->local_settings->{app_name}, 'Perl Application',
     'Config is read-only';
 
-my $global = NewFangle::Agent::Config->global_settings;
+$global = NewFangle::Agent::Config->global_settings;
 {
     local $ENV{NEWRELIC_ENABLED} = $global->{enabled} ? 1 : 0;
     is +NewFangle::Agent::Config->local_settings,
