@@ -275,7 +275,7 @@ sub import {
             return scalar( $requirer->($arg) );
         };
 
-    *CORE::GLOBAL::require = sub ($) {
+    *CORE::GLOBAL::require = sub :prototype($) {
         die "wrong number of arguments to require\n" unless @_ == 1;
 
         my ($arg) = @_;
