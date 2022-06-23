@@ -2,6 +2,10 @@ Revision history for NewFangle::Agent
 
 {{$NEXT}}
 
+    * Fixed an issue where environment variables would only be read into
+      the local config if they were truthy. This has been changed so they
+      are read if they are defined.
+
 0.006     2022-03-14 13:57:11 GMT
 
     * Refactored segment starters into packages under the
