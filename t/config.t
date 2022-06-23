@@ -57,11 +57,23 @@ subtest 'New Relic environment override' => sub {
 };
 
 subtest 'Environment variables override local config' => sub {
-    my $global = NewFangle::Agent::Config->global_settings;
-    local $ENV{NEWRELIC_ENABLED} = $global->{enabled} ? 1 : 0;
+    my $global  = NewFangle::Agent::Config->global_settings;
+    my $enabled = $global->{enabled} ? 1 : 0;
+
     is +NewFangle::Agent::Config->local_settings,
-        { %$global, enabled => $global->{enabled} ? 1 : 0 },
-        'Can change local settings same as global';
+        { %$global, enabled => $enabled }, 'Initial state';
+
+    # Flip once
+    local $ENV{NEWRELIC_ENABLED} = $enabled = $enabled ? 0 : 1;
+
+    is +NewFangle::Agent::Config->local_settings,
+        { %$global, enabled => $enabled }, 'State changed';
+
+    # Flip back
+    $ENV{NEWRELIC_ENABLED} = $enabled = $enabled ? 0 : 1;
+
+    is +NewFangle::Agent::Config->local_settings,
+        { %$global, enabled => $enabled }, 'State changed back';
 };
 
 done_testing;

@@ -139,7 +139,7 @@ sub local_settings {
 
     # Merge with environment variables
     while ( my ( $k, $v ) = each %environment ) {
-        $local->{$v} = $ENV{$k} if $ENV{$k};
+        $local->{$v} = $ENV{$k} if defined $ENV{$k};
     }
 
     $local->$set_log;
