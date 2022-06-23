@@ -3,59 +3,65 @@ use Test2::V0;
 use File::Share 'dist_file';
 use NewFangle::Agent::Config;
 
-$ENV{NEWRELIC_CONFIG_FILE} = dist_file 'NewFangle-Agent', 'test.yml';
-NewFangle::Agent::Config::initialize;
+subtest 'Config file from environment' => sub {
+    local $ENV{NEWRELIC_CONFIG_FILE} = dist_file 'NewFangle-Agent', 'test.yml';
 
-like +NewFangle::Agent::Config->global_settings => {
-    enabled     => T,
-    license_key => 'DEADBEEF',
-    app_name    => 'Perl Application',
-    log_level   => 'error',
-    transaction_tracer => {
-        enabled => 1,
-        include => {
-            paths => [
-                't/lib',
-            ],
-        },
-    }
-} => 'Loaded test config';
+    NewFangle::Agent::Config::initialize;
 
-$ENV{NEWRELIC_ENVIRONMENT} = 'environment';
+    like +NewFangle::Agent::Config->global_settings => {
+        enabled     => T,
+        license_key => 'DEADBEEF',
+        app_name    => 'Perl Application',
+        log_level   => 'error',
+        transaction_tracer => {
+            enabled => 1,
+            include => {
+                paths => [
+                    't/lib',
+                ],
+            },
+        }
+    };
+};
 
-NewFangle::Agent::Config->initialize; # Can call as class method
+subtest 'New Relic environment override' => sub {
+    local $ENV{NEWRELIC_CONFIG_FILE} = dist_file 'NewFangle-Agent', 'test.yml';
+    local $ENV{NEWRELIC_ENVIRONMENT} = 'environment';
 
-my $global = NewFangle::Agent::Config->global_settings;
+    NewFangle::Agent::Config->initialize; # Can call as class method
 
-is $global->{license_key}, 'eu01xxdeadbeefdeadbeefdeadbeefdeadbeNRAL',
-    'Environment overwrites config';
+    my $global = NewFangle::Agent::Config->global_settings;
 
-is +NewFangle::Agent::Config->local_settings, $global,
-    'Unchanged local settings same as global';
+    is $global->{license_key}, 'eu01xxdeadbeefdeadbeefdeadbeefdeadbeNRAL',
+        'Environment overwrites config';
 
-$global->{app_name} = 'Fake name';
-is +NewFangle::Agent::Config->local_settings->{app_name}, 'Perl Application',
-    'Config is read-only';
+    is +NewFangle::Agent::Config->local_settings, $global,
+        'Unchanged local settings same as global';
 
-$global = NewFangle::Agent::Config->global_settings;
-{
+    $global->{app_name} = 'Fake name';
+    is +NewFangle::Agent::Config->local_settings->{app_name}, 'Perl Application',
+        'Config is read-only';
+
+    is +NewFangle::Agent::Config->struct->to_perl,
+        NewFangle::Config->new(
+            app_name         => 'Perl Application',
+            license_key      => 'eu01xxdeadbeefdeadbeefdeadbeefdeadbeNRAL',
+            log_level        => 'error',
+            log_filename     => 'stderr',
+            datastore_tracer => {
+                database_name_reporting => 0,
+                instance_reporting      => 0,
+            },
+        )->to_perl,
+        'Can generate a C-based version of config';
+};
+
+subtest 'Environment variables override local config' => sub {
+    my $global = NewFangle::Agent::Config->global_settings;
     local $ENV{NEWRELIC_ENABLED} = $global->{enabled} ? 1 : 0;
     is +NewFangle::Agent::Config->local_settings,
         { %$global, enabled => $global->{enabled} ? 1 : 0 },
         'Can change local settings same as global';
-}
-
-is +NewFangle::Agent::Config->struct->to_perl,
-    NewFangle::Config->new(
-        app_name         => 'Perl Application',
-        license_key      => 'eu01xxdeadbeefdeadbeefdeadbeefdeadbeNRAL',
-        log_level        => 'error',
-        log_filename     => 'stderr',
-        datastore_tracer => {
-            database_name_reporting => 0,
-            instance_reporting      => 0,
-        },
-    )->to_perl,
-    'Can generate a C-based version of config';
+};
 
 done_testing;
