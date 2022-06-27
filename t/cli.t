@@ -105,6 +105,16 @@ subtest 'run-perl' => sub {
         'Loaded NewFangle::Agent when running Perl';
 };
 
+subtest 'version' => sub {
+    subtest 'Command' => sub {
+        like test('version'), qr/newrelic-admin v/, 'Print version';
+    };
+
+    subtest 'Option' => sub {
+        like test('--version'), qr/newrelic-admin v/, 'Print version';
+    };
+};
+
 done_testing;
 
 sub test {

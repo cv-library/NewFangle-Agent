@@ -10,7 +10,37 @@ use Getopt::Long qw( :config pass_through );
 
 require NewFangle::Agent::Config; # Do not initialise
 
-get_command( shift // 'help' )->();
+my $command = shift;
+$command = 'version' if $command =~ /^(?:--version|-v)$/;
+
+get_command( $command // 'help' )->();
+
+sub do_version {
+    GetOptions \my %opt => qw( help );
+
+    if ( $opt{help} ) {
+        print <<'USAGE';
+Usage: newrelic-admin version
+
+Print the version of the relevant libraries.
+USAGE
+        return;
+    }
+
+    require NewFangle;
+    require NewFangle::Agent;
+
+    no strict 'refs';
+
+    print <<"VERSION";
+$0 v$NewFangle::Agent::VERSION
+
+Supporting libraries:
+* FFI::Platypus  v$FFI::Platypus::VERSION
+* NewFangle      v$NewFangle::VERSION
+* libnewrelic    v@{[ NewFangle::newrelic_version() ]}
+VERSION
+}
 
 sub do_run_perl {
     GetOptions \my %opt => qw( help );
