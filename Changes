@@ -11,6 +11,7 @@ Revision history for NewFangle::Agent
       a prototype. This now uses the explicit `:prototype` trait to
       disambiguate.
     * Add tests for newrelic-admin CLI tool
+    * Add version command to newrelic-admin tool
 
 0.006     2022-03-14 13:57:11 GMT
 
