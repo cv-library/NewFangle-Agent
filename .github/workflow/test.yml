@@ -1,0 +1,65 @@
+name: Test
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest ]
+
+        # All supported Perl versions except latest.
+        perl: [
+          '5.20', '5.22', '5.24', '5.26', '5.28',
+          '5.30', '5.32', '5.34'
+        ]
+
+        # Variants of the latest Perl.
+        include:
+          - os: macos-latest
+            perl: 'latest'
+
+          - os: windows-latest
+            perl: 'latest'
+
+          # This is effectively our normal one: all features and cover.
+          - name: ' (all)'
+            os: ubuntu-latest
+            perl: 'latest'
+            cover: true
+
+    runs-on: ${{ matrix.os }}
+
+    name: v${{ matrix.perl }} on ${{ matrix.os }}${{ matrix.name }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: ${{ matrix.perl }}
+
+      - run: perl -v
+
+      - run: cpanm --installdeps -n .
+
+      - if: ${{ matrix.cover }}
+        run: cpanm -n Devel::Cover::Report::Coveralls
+
+      - run: perl Makefile.PL
+
+      - if: ${{ !matrix.cover }}
+        run: make test
+
+      - if: ${{ matrix.cover }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: cover -report Coveralls -test
