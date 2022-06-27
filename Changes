@@ -10,6 +10,7 @@ Revision history for NewFangle::Agent
       by our custom `require` which does not have a signature, but does have
       a prototype. This now uses the explicit `:prototype` trait to
       disambiguate.
+    * Add tests for newrelic-admin CLI tool
 
 0.006     2022-03-14 13:57:11 GMT
 
