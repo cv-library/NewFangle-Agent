@@ -5,6 +5,11 @@ Revision history for NewFangle::Agent
     * Fixed an issue where environment variables would only be read into
       the local config if they were truthy. This has been changed so they
       are read if they are defined.
+    * Silence a warning issued by newer Perls (5.36+) for which using @_
+      in a subroutine with signatures is experimental. This was being raised
+      by our custom `require` which does not have a signature, but does have
+      a prototype. This now uses the explicit `:prototype` trait to
+      disambiguate.
 
 0.006     2022-03-14 13:57:11 GMT
 
