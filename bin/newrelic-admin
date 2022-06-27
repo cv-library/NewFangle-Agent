@@ -31,10 +31,7 @@ USAGE
         return;
     }
 
-    unless ( @ARGV ) {
-        print_usage('run-perl');
-        exit 1;
-    }
+    print_usage('run-perl') unless @ARGV;
 
     system $Config{perlpath}, '-MNewFangle::Agent', @ARGV;
 }
@@ -52,10 +49,7 @@ USAGE
         return;
     }
 
-    unless ( @ARGV ) {
-        print_usage('license-key');
-        exit 1;
-    }
+    print_usage('license-key') unless @ARGV;
 
     my ( $config, $log ) = @ARGV;
     undef $config if $config eq '-';
@@ -87,10 +81,7 @@ USAGE
         return;
     }
 
-    unless ( @ARGV ) {
-        print_usage('generate-config');
-        exit 1;
-    }
+    print_usage('generate-config') unless @ARGV;
 
     my ( $key, $target ) = @ARGV;
 
@@ -129,10 +120,7 @@ USAGE
         return;
     }
 
-    unless ( @ARGV ) {
-        print_usage('local-config');
-        exit 1;
-    }
+    print_usage('local-config') unless @ARGV;
 
     my $config = $ARGV[0];
     undef $config if $ARGV[0] eq '-';
@@ -149,7 +137,7 @@ USAGE
 sub do_help {
     GetOptions \my %opt => qw( help );
 
-    print_usage( $ARGV[0] ) if $ARGV[0];
+    print_usage( $ARGV[0], 0 ) if $ARGV[0];
 
     print <<'USAGE';
 Usage: newrelic-admin command [options]
@@ -180,5 +168,5 @@ sub print_usage {
     my ( $command, $code ) = @_;
     local @ARGV = qw( --help );
     get_command( $command )->();
-    exit ( $code // 0 );
+    exit ( $code // 1 );
 }
