@@ -74,7 +74,7 @@ sub do_generate_config {
 
     if ( $opt{help} ) {
         print <<'USAGE';
-Usage: newrelic-admin generate-options <license-key> [target-path]
+Usage: newrelic-admin generate-config <license-key> [target-path]
 
 Generates a sample agent configuration file for <license_key>.
 USAGE
@@ -111,11 +111,13 @@ sub do_local_config {
 
     if ( $opt{help} ) {
         print <<'USAGE';
-Usage: newrelic-admin generate-options <config-file> [log-file]
+Usage: newrelic-admin local-config <config-file> [log-file]
 
 Dumps out the local agent configuration after having loaded the settings
 from <config-file>. If a hyphen (-) is used as the value for <config-file>,
 the default values will be used instead.
+
+Note: this command requires the YAML::XS module to be available.
 USAGE
         return;
     }
@@ -140,7 +142,7 @@ sub do_help {
     print_usage( $ARGV[0], 0 ) if $ARGV[0];
 
     print <<'USAGE';
-Usage: newrelic-admin command [options]
+Usage: newrelic-admin COMMAND [options]
 
 Type 'newrelic-admin help <command>'
 for help on a specific command.
