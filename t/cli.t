@@ -83,7 +83,7 @@ subtest 'generate-config' => sub {
     };
 
     subtest 'Print to path' => sub {
-        my $path = tempfile();
+        my (undef, $path) = tempfile();
 
         is test('generate-config', 'foo', $path), '', 'Nothing to STDOUT';
 
