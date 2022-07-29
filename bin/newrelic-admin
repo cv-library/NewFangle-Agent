@@ -8,10 +8,10 @@ use Config;
 use File::Share 'dist_file';
 use Getopt::Long qw( :config pass_through );
 
-require NewFangle::Agent::Config; # Do not initialise
+require NewFangle::Agent::Config;    # Do not initialise
 
 my $command = shift;
-$command = 'version' if $command =~ /^(?:--version|-v)$/;
+$command = 'version' if $command && $command =~ /^(?:--version|-v)$/;
 
 get_command( $command // 'help' )->();
 
@@ -43,27 +43,67 @@ VERSION
 }
 
 sub do_run_perl {
-    GetOptions \my %opt => qw( help );
+    GetOptions \my %opt => qw( help tx=s );
 
     if ( $opt{help} ) {
         print <<'USAGE';
-Usage: newrelic-admin run-perl ...
+Usage: newrelic-admin run-perl [--tx <transaction-name>] ...
 
 Executes the Perl interpreter with the supplied arguments but forces
-the initialisation of the agent automatically at startup.
+the initialisation of the agent and wraps the command in a transaction.
 
 If using an agent configuration file the path to the file should be
 supplied by the environment variable NEWRELIC_CONFIG_FILE. Alternatively,
 just the licence key, application and log file details can be supplied via
 environment variables NEWRELIC_LICENSE_KEY, NEWRELIC_APP_NAME and
 NEWRELIC_LOG_FILE.
+
+NewRelic is initialised for the host specified in NEWRELIC_DAEMON_HOST
+The transaction name specified is initiated for the App specified in NEWRELIC_APP_NAME
 USAGE
         return;
     }
 
+    # the transaction name can be passed in as an option
+    # or we default it to 'newrelic-admin'
+    my $txn = $opt{tx} // 'newrelic-admin';
+
+    # we need to make sure there is a command to run
     print_usage('run-perl') unless @ARGV;
 
-    system $Config{perlpath}, '-MNewFangle::Agent', @ARGV;
+    use NewFangle qw(newrelic_init);
+    require NewFangle::App;
+    require NewFangle::Agent;
+    require NewFangle::Agent::Config;
+
+    newrelic_init( $ENV{NEWRELIC_DAEMON_HOST}, 100 );
+    my $app
+        = eval { NewFangle::App->new( NewFangle::Agent::Config->struct, 100 ) };
+    local $NewFangle::Agent::TX;
+    $NewFangle::Agent::TX = $app->start_non_web_transaction($txn)
+        if $app && $app->connected;
+
+    my $exit_status = 0;
+    if ( system $Config{perlpath}, '-MNewFangle::Agent', @ARGV ) {
+        # oops, something went wrong
+        $exit_status = $?;
+        $exit_status >>= 8;
+        if ( $? == -1 ) {
+            warn "failed to execute: $!\n";
+        }
+        elsif ( $? & 127 ) {
+            warn sprintf(
+                "child process died with signal %d, %s coredump\n",
+                ( $? & 127 ),
+                ( $? & 128 ) ? 'with' : 'without'
+            );
+        }
+        else {
+            warn sprintf( "child process exited with value %d\n",
+                $exit_status );
+        }
+    }
+    exit $exit_status;
 }
 
 sub do_license_key {
@@ -125,7 +165,7 @@ USAGE
     $content =~ s/\Q*** REPLACE ME ***\E/$key/g if $key;
 
     my $fh;
-    if ( $target ) {
+    if ($target) {
         open $fh, '>', $target
             or die "Could not write to $target: $!";
     }
@@ -158,8 +198,8 @@ USAGE
     undef $config if $ARGV[0] eq '-';
 
     NewFangle::Agent::Config::initialize(
-        config_file   => $config,
-        log_file      => $opt{'log-file'},
+        config_file => $config,
+        log_file    => $opt{'log-file'},
     );
 
     require YAML::XS;
@@ -180,7 +220,8 @@ for help on a specific command.
 Available commands are:
 USAGE
 
-    print " $_\n" for sort map { s/^do_//; y/_/-/; $_ } grep /^do_/, keys %main::;
+    print " $_\n"
+        for sort map { s/^do_//; y/_/-/; $_ } grep /^do_/, keys %main::;
 }
 
 sub get_command {
@@ -188,7 +229,7 @@ sub get_command {
 
     my $code = $main::{ 'do_' . ( $command =~ s/-/_/gr ) };
 
-    unless ( $code ) {
+    unless ($code) {
         print "Unknown command '$command'. Type '$0 help' for usage\n";
         exit 1;
     }
@@ -199,6 +240,6 @@ sub get_command {
 sub print_usage {
     my ( $command, $code ) = @_;
     local @ARGV = qw( --help );
-    get_command( $command )->();
-    exit ( $code // 1 );
+    get_command($command)->();
+    exit( $code // 1 );
 }
