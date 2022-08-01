@@ -25,15 +25,12 @@ jobs:
         # Variants of the latest Perl.
         include:
           - os: macos-latest
-            perl: 'latest'
-
-          - os: windows-latest
-            perl: 'latest'
+            perl: latest
 
           # This is effectively our normal one: all features and cover.
           - name: ' (all)'
             os: ubuntu-latest
-            perl: 'latest'
+            perl: latest
             cover: true
 
     runs-on: ${{ matrix.os }}
