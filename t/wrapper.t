@@ -200,18 +200,22 @@ wrap wrapped =>
 outer(49..54);
 
 {
-    # exceptions
+    # TODO: Argument gets lost on versions below 5.24 because
+    # the value of @_ does is lost before we run the defer blocks
+    # when an exception is raised
+    my $test = 55;
+
     my $die;
-    sub foo { ok $_[0]; die 'died' if $die }
+    sub foo { ok $test++; die 'died' if $die }
 
     wrap foo => (
-        pre  => sub { ok $_[0] - 1 },
-        post => sub { ok $_[0] + 1 },
+        pre  => sub { ok $test++ },
+        post => sub { ok $test++ },
     );
 
-    foo(56);
+    foo();
 
-    $die = 1 and eval { foo(59) };
+    $die = 1 and eval { foo() };
 
     print 'not ' unless $@ =~ /died/;
     ok 61;
