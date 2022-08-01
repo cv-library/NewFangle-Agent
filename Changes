@@ -2,6 +2,14 @@ Revision history for NewFangle::Agent
 
 {{$NEXT}}
 
+    * Fixed an issue with CLI tests that could leave stale files behind on
+      failed runs.
+    * Fixed an issue with the CI configuration, which made tests not run.
+      Current config does not include Windows tests.
+    * The `run-perl` command in `newrelic-admin` now wraps the code to execute
+      in a transaction tracked in an app that is initialised according to the
+      current config.
+
 0.007     2022-07-06 09:08:20 BST
 
     * Fixed an issue where environment variables would only be read into
