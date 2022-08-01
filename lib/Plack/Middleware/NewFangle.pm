@@ -23,7 +23,7 @@ use Scalar::Util 'weaken';
 
 use namespace::clean;
 
-our $VERSION = '0.008';
+our $VERSION = '0.009';
 
 my %cache;
 

@@ -7,7 +7,7 @@ use feature qw/state/;
 
 use namespace::clean;
 
-our $VERSION = '0.008';
+our $VERSION = '0.009';
 
 sub build ( $class, $method ) {
     return sub {
