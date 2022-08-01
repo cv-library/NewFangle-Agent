@@ -60,7 +60,7 @@ sub wrap (*@) {  ## no critic Prototypes
             $prereturn = $return = [];
             () = $wrapper{pre}->(@_,$return) if $wrapper{pre};
             if (ref $return eq 'ARRAY' && $return == $prereturn && !@$return) {
-                defer { () = $wrapper{post}->(@_, $return) if $wrapper{post} };
+                defer { () = $wrapper{post}->(@_, $return) if $wrapper{post} }
                 $return = [ &$original ];
             }
             return ref $return eq 'ARRAY' ? @$return : ($return);
@@ -69,7 +69,7 @@ sub wrap (*@) {  ## no critic Prototypes
             $return = bless sub {$prereturn=1}, 'NewFangle::Agent::Wrapper::Cleanup';
             my $dummy = $wrapper{pre}->(@_, $return) if $wrapper{pre};
             unless ($prereturn) {
-                defer { $dummy = scalar $wrapper{post}->(@_, $return) if $wrapper{post} };
+                defer { $dummy = scalar $wrapper{post}->(@_, $return) if $wrapper{post} }
                 $return = &$original;
             }
             return $return;
@@ -78,7 +78,7 @@ sub wrap (*@) {  ## no critic Prototypes
             $return = bless sub {$prereturn=1}, 'NewFangle::Agent::Wrapper::Cleanup';
             $wrapper{pre}->(@_, $return) if $wrapper{pre};
             unless ($prereturn) {
-                defer { $wrapper{post}->(@_, $return) if $wrapper{post} };
+                defer { $wrapper{post}->(@_, $return) if $wrapper{post} }
                 &$original;
             }
             return;
