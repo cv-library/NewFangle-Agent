@@ -156,7 +156,7 @@ done_testing;
 
 sub test ( $args, $exp_err = "", $exp_ret = 0 ) {
     my ( $out, $err, $ret )
-        = capture { system 'bin/newrelic-admin', $args->@* };
+        = capture { system 'bin/newrelic-admin', @$args };
 
     if ( !$exp_err ) {
         is $err, '', 'Nothing on STDERR';
