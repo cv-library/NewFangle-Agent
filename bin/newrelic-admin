@@ -52,7 +52,7 @@ Usage: newrelic-admin run-perl [--tx <transaction-name>] ...
 Executes the Perl interpreter with the supplied arguments but forces
 the initialisation of the agent and wraps the command in a transaction.
 
-If using an agent configuration file the path to the file should be
+If using an agent configuration file, the path to the file should be
 supplied by the environment variable NEWRELIC_CONFIG_FILE. Alternatively,
 just the licence key, application and log file details can be supplied via
 environment variables NEWRELIC_LICENSE_KEY, NEWRELIC_APP_NAME and
@@ -71,10 +71,13 @@ USAGE
     # we need to make sure there is a command to run
     print_usage('run-perl') unless @ARGV;
 
-    use NewFangle qw(newrelic_init);
+    use NewFangle qw(newrelic_configure_log newrelic_init);
     require NewFangle::App;
     require NewFangle::Agent;
     require NewFangle::Agent::Config;
+
+    my $cfg = NewFangle::Agent::Config->local_settings;
+    newrelic_configure_log( $cfg->{log_filename}, $cfg->{log_level} );
 
     newrelic_init( $ENV{NEWRELIC_DAEMON_HOST}, 100 );
     my $app
