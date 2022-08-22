@@ -75,27 +75,27 @@
    "provides" : {
       "NewFangle::Agent" : {
          "file" : "lib/NewFangle/Agent.pm",
-         "version" : "0.008"
+         "version" : "0.009"
       },
       "NewFangle::Agent::Config" : {
          "file" : "lib/NewFangle/Agent/Config.pm",
-         "version" : "0.008"
+         "version" : "0.009"
       },
       "NewFangle::Agent::SegmentStarter::DBI::st" : {
          "file" : "lib/NewFangle/Agent/SegmentStarter/DBI/st.pm",
-         "version" : "0.008"
+         "version" : "0.009"
       },
       "NewFangle::Agent::SegmentStarter::HTTP::Tiny" : {
          "file" : "lib/NewFangle/Agent/SegmentStarter/HTTP/Tiny.pm",
-         "version" : "0.008"
+         "version" : "0.009"
       },
       "NewFangle::Agent::SegmentStarter::LWP::UserAgent" : {
          "file" : "lib/NewFangle/Agent/SegmentStarter/LWP/UserAgent.pm",
-         "version" : "0.008"
+         "version" : "0.009"
       },
       "Plack::Middleware::NewFangle" : {
          "file" : "lib/Plack/Middleware/NewFangle.pm",
-         "version" : "0.008"
+         "version" : "0.009"
       }
    },
    "release_status" : "stable",
@@ -109,7 +109,7 @@
          "web" : "https://github.com/cv-library/NewFangle-Agent"
       }
    },
-   "version" : "0.008",
+   "version" : "0.009",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.036000"
@@ -340,7 +340,7 @@
                   "branch" : null,
                   "changelog" : "Changes",
                   "signed" : 0,
-                  "tag" : "0.008",
+                  "tag" : "0.009",
                   "tag_format" : "%v",
                   "tag_message" : ""
                },
