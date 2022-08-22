@@ -2,6 +2,10 @@ Revision history for NewFangle::Agent
 
 {{$NEXT}}
 
+    * The `run-perl` command in newrelic-admin now uses local logging options
+      (as reported by NewFangle::Agent::Config). This is passed down to
+      `newrelic_configure_log` before initialising.
+
 0.008     2022-08-01 11:22:53 BST
 
     * Fixed an issue with CLI tests that could leave stale files behind on
