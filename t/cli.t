@@ -120,14 +120,14 @@ subtest 'run-perl' => sub {
 
     is test(
         [ qw( run-perl -Ilib -E ), 'say ">> $NewFangle::Agent::VERSION <<"' ],
-        qr/failed to connect to the daemon/,
+        qr/(?:failed|unable) to connect/,
         ),
         ">> $NewFangle::Agent::VERSION <<\n",
         'Loaded NewFangle::Agent when running Perl';
 
     is test(
         [ qw( run-perl --tx wrapped-job -E ), 'say ">> HELLO <<"' ],
-        qr/failed to connect to the daemon/,
+        qr/(?:failed|unable) to connect/,
         ),
         ">> HELLO <<\n",
         'Perl expression successfully run with the transaction wrapper';
