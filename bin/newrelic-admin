@@ -72,17 +72,20 @@ USAGE
     # we need to make sure there is a command to run
     print_usage('run-perl') unless @ARGV;
 
-    use NewFangle qw(newrelic_configure_log newrelic_init);
+    require NewFangle;
     require NewFangle::App;
     require NewFangle::Agent;
     require NewFangle::Agent::Config;
 
     my $cfg = NewFangle::Agent::Config->local_settings;
-    newrelic_configure_log( $cfg->{log_filename}, $cfg->{log_level} );
 
-    newrelic_init( $ENV{NEWRELIC_DAEMON_HOST}, 100 );
-    my $app
-        = eval { NewFangle::App->new( NewFangle::Agent::Config->struct, 100 ) };
+    NewFangle::newrelic_configure_log( @$cfg{qw( log_filename log_level )} );
+    NewFangle::newrelic_init( $ENV{NEWRELIC_DAEMON_HOST}, 100 );
+
+    my $app = eval {
+        NewFangle::App->new( NewFangle::Agent::Config->struct, 100 )
+    };
+
     local $NewFangle::Agent::TX;
     $NewFangle::Agent::TX = $app->start_non_web_transaction($txn)
         if $app && $app->connected;
