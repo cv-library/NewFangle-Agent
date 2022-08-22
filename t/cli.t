@@ -109,15 +109,15 @@ subtest 'generate-config' => sub {
 };
 
 subtest 'run-perl' => sub {
-    # this assumes NewRelic is enabled
-    local $ENV{NEWRELIC_ENABLED}     = 1;
-    local $ENV{NEWRELIC_CONFIG_FILE} = dist_file 'NewFangle-Agent',
-        'test.yml';
-    local $ENV{NEWRELIC_ENVIRONMENT} = 'environment';
-    local $ENV{NEWRELIC_DAEMON_HOST} = '127.0.0.1:8000';
-    local $ENV{NEWRELIC_APP_NAME}    = 'unit tests';
+    local %ENV = %ENV;
+    $ENV{NEWRELIC_ENABLED}     = 1;
+    $ENV{NEWRELIC_CONFIG_FILE} = dist_file 'NewFangle-Agent', 'test.yml';
+    $ENV{NEWRELIC_ENVIRONMENT} = 'environment';
+    $ENV{NEWRELIC_DAEMON_HOST} = '127.0.0.1:8000';
+    $ENV{NEWRELIC_APP_NAME}    = 'unit tests';
 
     require NewFangle::Agent;
+
     is test(
         [ qw( run-perl -Ilib -E ), 'say ">> $NewFangle::Agent::VERSION <<"' ],
         qr/failed to connect to the daemon/,
