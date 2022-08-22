@@ -59,7 +59,8 @@ environment variables NEWRELIC_LICENSE_KEY, NEWRELIC_APP_NAME and
 NEWRELIC_LOG_FILE.
 
 NewRelic is initialised for the host specified in NEWRELIC_DAEMON_HOST
-The transaction name specified is initiated for the App specified in NEWRELIC_APP_NAME
+The transaction name specified is initiated for the App specified in
+NEWRELIC_APP_NAME
 USAGE
         return;
     }
