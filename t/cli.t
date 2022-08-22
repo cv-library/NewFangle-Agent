@@ -154,19 +154,13 @@ subtest 'version' => sub {
 
 done_testing;
 
-sub test ( $args, $exp_err = "", $exp_ret = 0 ) {
+sub test ( $args, $exp_err = qr/^$/, $exp_ret = 0 ) {
     my ( $out, $err, $ret )
         = capture { system 'bin/newrelic-admin', @$args };
 
-    if ( !$exp_err ) {
-        is $err, '', 'Nothing on STDERR';
-    }
-    else {
-        # In the unlikely event that you have a daemon
-        # listening locally on 127.0.0.1:8000 AND the licence key
-        # used in this test is valid for it, this check can fail
-        like $err, $exp_err, 'STDERR matched expected';
-    }
+    # In the unlikely event that you have a daemon listening locally AND
+    # the licence key used in this test is valid for it, this check can fail
+    like $err, $exp_err, 'STDERR matched expected';
 
     is $ret, $exp_ret, "Exits with expected return code: $exp_ret";
 
