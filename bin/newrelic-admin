@@ -95,21 +95,20 @@ USAGE
         # oops, something went wrong
         $exit_status = $?;
         $exit_status >>= 8;
+
         if ( $? == -1 ) {
             warn "failed to execute: $!\n";
         }
         elsif ( $? & 127 ) {
-            warn sprintf(
-                "child process died with signal %d, %s coredump\n",
+            warn sprintf "child process died with signal %d, %s coredump\n",
                 ( $? & 127 ),
-                ( $? & 128 ) ? 'with' : 'without'
-            );
+                ( $? & 128 ) ? 'with' : 'without';
         }
         else {
-            warn sprintf( "child process exited with value %d\n",
-                $exit_status );
+            warn sprintf "child process exited with value %d\n", $exit_status;
         }
     }
+
     exit $exit_status;
 }
 
