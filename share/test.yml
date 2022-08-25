@@ -11,3 +11,4 @@ transaction_tracer:
 environments:
     environment:
         license_key: eu01xxdeadbeefdeadbeefdeadbeefdeadbeNRAL
+        log_level: info

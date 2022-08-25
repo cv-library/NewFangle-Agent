@@ -67,7 +67,7 @@ my %environment = (
 
 my $set_log = sub {
     for ( $_[0]->{log_level} ) {
-        my $name = lc;
+        my $name = lc ( $_ // '' );
 
            if ( $name eq 'critical' ) { $_ = dualvar( 0 => $name ) }
         elsif ( $name eq 'error'    ) { $_ = dualvar( 1 => $name ) }
@@ -76,7 +76,7 @@ my $set_log = sub {
         elsif ( $name eq 'debug'    ) { $_ = dualvar( 4 => $name ) }
         elsif ( $name eq 'trace'    ) { $_ = dualvar( 5 => $name ) }
         else {
-            warn "Unrecognised log level in config: $_";
+            warn "Unrecognised log level in config: '$_'";
             delete $_[0]->{log_level};
         }
     }
@@ -116,7 +116,7 @@ sub initialize {
 
     # Merge with environment variables
     while ( my ( $k, $v ) = each %environment ) {
-        $config->{$v} = $ENV{$k} if $ENV{$k};
+        $config->{$v} = $ENV{$k} if defined $ENV{$k};
     }
 
     delete $config->{environments};

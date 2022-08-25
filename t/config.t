@@ -25,8 +25,8 @@ subtest 'Config file from environment' => sub {
 };
 
 subtest 'New Relic environment override' => sub {
-    local $ENV{NEWRELIC_CONFIG_FILE} = dist_file 'NewFangle-Agent', 'test.yml';
-    local $ENV{NEWRELIC_ENVIRONMENT} = 'environment';
+    local $ENV{NEWRELIC_CONFIG_FILE}  = dist_file 'NewFangle-Agent', 'test.yml';
+    local $ENV{NEWRELIC_ENVIRONMENT}  = 'environment';
 
     NewFangle::Agent::Config->initialize; # Can call as class method
 
@@ -46,7 +46,7 @@ subtest 'New Relic environment override' => sub {
         NewFangle::Config->new(
             app_name         => 'Perl Application',
             license_key      => 'eu01xxdeadbeefdeadbeefdeadbeefdeadbeNRAL',
-            log_level        => 'error',
+            log_level        => 'info',
             log_filename     => 'stderr',
             datastore_tracer => {
                 database_name_reporting => 0,
@@ -54,6 +54,43 @@ subtest 'New Relic environment override' => sub {
             },
         )->to_perl,
         'Can generate a C-based version of config';
+};
+
+subtest 'Environment variables override global config' => sub {
+    {
+        local $ENV{NEWRELIC_CONFIG_FILE}  = dist_file 'NewFangle-Agent', 'test.yml';
+        local $ENV{NEWRELIC_ENVIRONMENT}  = 'environment';
+
+        subtest 'Defined override' => sub {
+            local $ENV{NEWRELIC_LOG_LEVEL} = 'warning';
+            NewFangle::Agent::Config->initialize; # Re-read global config
+            is +NewFangle::Agent::Config->global_settings->{log_level},
+                warning => 'Global settings are overriden';
+        };
+
+        subtest 'Undefined value is ignored' => sub {
+            local $ENV{NEWRELIC_LOG_LEVEL};
+            NewFangle::Agent::Config->initialize; # Re-read global config
+            is +NewFangle::Agent::Config->global_settings->{log_level},
+                info => 'Undefined value is ignored';
+        };
+
+        subtest 'False value is read' => sub {
+            local $ENV{NEWRELIC_LOG_LEVEL} = '';
+            like warnings {
+                NewFangle::Agent::Config->initialize; # Re-read global config
+            } => [
+                qr/^Unrecognised log level in config:/,
+            ];
+
+            is +NewFangle::Agent::Config->global_settings->{log_level},
+                error => 'Unknown log level resets to default';
+        };
+    }
+
+    # Re-set back to what it was
+    NewFangle::Agent::Config->initialize; # Re-read global config
+    is +NewFangle::Agent::Config->global_settings->{log_level}, 'error';
 };
 
 subtest 'Environment variables override local config' => sub {
