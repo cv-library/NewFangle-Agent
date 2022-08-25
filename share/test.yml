@@ -4,6 +4,7 @@ app_name: Perl Application
 log_level: error
 transaction_tracer:
     enabled: true
+    duration: 0.05
     include:
         paths:
             - t/lib

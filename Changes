@@ -5,6 +5,9 @@ Revision history for NewFangle::Agent
       the global config if they were truthy. This has been changed so they
       are read if they are defined. This is similar to the issue fixed in
       0.007.
+    * Added a new `daemon_timeout` field to the configuration file to specify
+      how many seconds a connection to the daemon should wait before aborting.
+      This setting is respected by the `run-perl` command in newrelic-admin.
 
 0.009     2022-08-22 15:46:53 BST
 
