@@ -48,6 +48,9 @@ subtest 'New Relic environment override' => sub {
             license_key      => 'eu01xxdeadbeefdeadbeefdeadbeefdeadbeNRAL',
             log_level        => 'info',
             log_filename     => 'stderr',
+            transaction_tracer => {
+                duration_us => 50_000,
+            },
             datastore_tracer => {
                 database_name_reporting => 0,
                 instance_reporting      => 0,

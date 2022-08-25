@@ -19,9 +19,10 @@ our $VERSION = '0.010';
 my ( $config );
 
 my $defaults = {
-    enabled      => 0,
-    log_filename => 'stderr',
-    log_level    => 'error',
+    enabled        => 0,
+    log_filename   => 'stderr',
+    log_level      => 'error',
+    daemon_timeout => 0.1,
     distributed_tracing => {
         enabled => 0,
     },
@@ -57,12 +58,13 @@ my $defaults = {
 };
 
 my %environment = (
-    NEWRELIC_APP_NAME    => 'app_name',
-    NEWRELIC_LICENSE_KEY => 'license_key',
-    NEWRELIC_LOG_FILE    => 'log_filename',
-    NEWRELIC_LOG_LEVEL   => 'log_level',
-    NEWRELIC_ENABLED     => 'enabled',
-    NEWRELIC_DAEMON_HOST => 'daemon_host',
+    NEWRELIC_APP_NAME       => 'app_name',
+    NEWRELIC_LICENSE_KEY    => 'license_key',
+    NEWRELIC_LOG_FILE       => 'log_filename',
+    NEWRELIC_LOG_LEVEL      => 'log_level',
+    NEWRELIC_ENABLED        => 'enabled',
+    NEWRELIC_DAEMON_HOST    => 'daemon_host',
+    NEWRELIC_DAEMON_TIMEOUT => 'daemon_timeout',
 );
 
 my $set_log = sub {
@@ -164,15 +166,13 @@ sub struct {
         $tx->{datastore_reporting}{threshold_us} = $seconds * 1_000_000;
     }
 
-    delete $agent->{enabled};
-    delete $agent->{daemon_host};
+    delete @{$agent}{qw( enabled daemon_host daemon_timeout )};
 
     # C Struct log levels are narrower
     $agent->{log_level} = 'error' if $agent->{log_level} eq 'critical';
     $agent->{log_level} = 'debug' if $agent->{log_level} eq 'trace';
 
-    delete $tx->{include};
-    delete $tx->{exclude};
+    delete @{$tx}{qw( include exclude )};
 
     # Silence warnings in FFI::CStructDef about falsy empty strings
     $agent->{datastore_tracer}{database_name_reporting}        ||= 0;

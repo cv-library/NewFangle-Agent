@@ -56,6 +56,7 @@ These are the hard-coded default values, used if nothing else is provided:
     enabled: false
     log_filename: stderr
     log_level: error
+    daemon_timeout: 0.1
 
     distributed_tracing:
         enabled: true
@@ -145,6 +146,10 @@ Mapped to L<enabled|/enabled>.
 =head4 NEWRELIC_DAEMON_HOST
 
 Mapped to L<daemon_host|/daemon_host>.
+
+=head4 NEWRELIC_DAEMON_TIMEOUT
+
+Mapped to L<daemon_timeout|/daemon_timeout>.
 
 =head4 NEWRELIC_CONFIG_FILE
 
@@ -266,6 +271,13 @@ L<the documentation|https://docs.newrelic.com/docs/agents/c-sdk/get-started/intr
 for more details.
 
 Can be overridden with the C<NEWRELIC_DAEMON_HOST> environment file.
+
+=head2 daemon_timeout
+
+Set the number of seconds a connection to the New Relic daemon should wait
+before it times out.
+
+Can be overridden with the C<NEWRELIC_DAEMON_TIMEOUT> environment file.
 
 =head2 distributed_tracing
 

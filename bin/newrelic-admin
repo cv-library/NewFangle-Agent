@@ -53,14 +53,18 @@ Executes the Perl interpreter with the supplied arguments but forces
 the initialisation of the agent and wraps the command in a transaction.
 
 If using an agent configuration file, the path to the file should be
-supplied by the environment variable NEWRELIC_CONFIG_FILE. Alternatively,
-just the licence key, application and log file details can be supplied via
-environment variables NEWRELIC_LICENSE_KEY, NEWRELIC_APP_NAME and
-NEWRELIC_LOG_FILE.
+supplied by the environment variable NEWRELIC_CONFIG_FILE. Any other
+environment variables that affect the configuration of the agent will
+apply. For more details, see the documentation for the
+NewFangle::Agent::Config module or the details in the sample
+configuration file created via the 'generate-config` command.
 
-NewRelic is initialised for the host specified in NEWRELIC_DAEMON_HOST
-The transaction name specified is initiated for the App specified in
-NEWRELIC_APP_NAME
+NewRelic is initialised for the host specified in the active configuration
+or in the NEWRELIC_DAEMON_HOST environment variable.
+
+The provided command will run inside a transaction. The name of the
+transaction will be taken from the value of the '--tx' option, or default
+to 'newrelic-admin' if none is provided.
 USAGE
         return;
     }
@@ -85,9 +89,17 @@ USAGE
         @{ $struct->to_perl }{qw( log_filename log_level )}
     );
 
-    NewFangle::newrelic_init( $config->{daemon_host}, 100 );
+    NewFangle::newrelic_init(
+        $config->{daemon_host},
+        $config->{daemon_timeout} * 1_000,
+    );
 
-    my $app = eval { NewFangle::App->new( $struct, 100 ) };
+    my $app = eval {
+        NewFangle::App->new(
+            $struct,
+            $config->{daemon_timeout} * 1_000,
+        )
+    };
 
     local $NewFangle::Agent::TX;
     $NewFangle::Agent::TX = $app->start_non_web_transaction($txn)
