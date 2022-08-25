@@ -77,14 +77,17 @@ USAGE
     require NewFangle::Agent;
     require NewFangle::Agent::Config;
 
-    my $cfg = NewFangle::Agent::Config->local_settings;
+    my $config = NewFangle::Agent::Config->local_settings;
+    my $struct = NewFangle::Agent::Config->struct;
 
-    NewFangle::newrelic_configure_log( @$cfg{qw( log_filename log_level )} );
-    NewFangle::newrelic_init( $ENV{NEWRELIC_DAEMON_HOST}, 100 );
+    # C Struct log levels are narrower
+    NewFangle::newrelic_configure_log(
+        @{ $struct->to_perl }{qw( log_filename log_level )}
+    );
 
-    my $app = eval {
-        NewFangle::App->new( NewFangle::Agent::Config->struct, 100 )
-    };
+    NewFangle::newrelic_init( $config->{daemon_host}, 100 );
+
+    my $app = eval { NewFangle::App->new( $struct, 100 ) };
 
     local $NewFangle::Agent::TX;
     $NewFangle::Agent::TX = $app->start_non_web_transaction($txn)
