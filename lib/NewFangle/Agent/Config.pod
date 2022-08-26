@@ -146,6 +146,10 @@ Mapped to L<enabled|/enabled>.
 
 Mapped to L<daemon_host|/daemon_host>.
 
+=head4 NEWRELIC_DAEMON_TIMEOUT
+
+Mapped to L<daemon_timeout|/daemon_timeout>.
+
 =head4 NEWRELIC_CONFIG_FILE
 
 Sets a default location for the configuration file (see

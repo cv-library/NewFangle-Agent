@@ -62,6 +62,12 @@ log_level: info
 # for more details.
 # daemon_host: ...
 
+# Sets the timeout, in milliseconds, before an attempt to connect
+# to the New Relic C Daemon is abandoned
+# This defaults to 100 milliseconds if left unconfigured
+# It can be overridden for each environment below.
+# daemon_timeout: 100
+
 # Distributed tracing lets you see the path that a request takes
 # through your distributed system. Enabling distributed tracing
 # changes the behavior of some New Relic features, so carefully

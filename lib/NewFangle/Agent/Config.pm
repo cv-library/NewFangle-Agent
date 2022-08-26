@@ -16,16 +16,14 @@ use namespace::clean;
 
 our $VERSION = '0.010';
 
-my ( $config );
+my ($config);
 
 my $defaults = {
-    enabled      => 0,
-    log_filename => 'stderr',
-    log_level    => 'error',
-    distributed_tracing => {
-        enabled => 0,
-    },
-    transaction_tracer => {
+    enabled             => 0,
+    log_filename        => 'stderr',
+    log_level           => 'error',
+    distributed_tracing => { enabled => 0, },
+    transaction_tracer  => {
         enabled               => 1,
         threshold             => 'is_apdex_failing',
         stack_trace_threshold => 0.5,
@@ -37,44 +35,53 @@ my $defaults = {
         },
         include => {
             subpackages => {
-                DBI => [qw(
-                    DBI::st
-                )],
+                DBI => [
+                    qw(
+                        DBI::st
+                    )
+                ],
             },
             subroutines => {
-                'HTTP::Tiny' => [qw(
-                    request
-                )],
-                'LWP::UserAgent' => [qw(
-                    request
-                )],
-                'DBI::st' => [qw(
-                    execute
-                )],
+                'HTTP::Tiny' => [
+                    qw(
+                        request
+                    )
+                ],
+                'LWP::UserAgent' => [
+                    qw(
+                        request
+                    )
+                ],
+                'DBI::st' => [
+                    qw(
+                        execute
+                    )
+                ],
             },
         },
     },
 };
 
 my %environment = (
-    NEWRELIC_APP_NAME    => 'app_name',
-    NEWRELIC_LICENSE_KEY => 'license_key',
-    NEWRELIC_LOG_FILE    => 'log_filename',
-    NEWRELIC_LOG_LEVEL   => 'log_level',
-    NEWRELIC_ENABLED     => 'enabled',
-    NEWRELIC_DAEMON_HOST => 'daemon_host',
+    NEWRELIC_APP_NAME       => 'app_name',
+    NEWRELIC_LICENSE_KEY    => 'license_key',
+    NEWRELIC_LOG_FILE       => 'log_filename',
+    NEWRELIC_LOG_LEVEL      => 'log_level',
+    NEWRELIC_ENABLED        => 'enabled',
+    NEWRELIC_DAEMON_HOST    => 'daemon_host',
+    NEWRELIC_DAEMON_TIMEOUT => 'daemon_timeout',
 );
 
 my $set_log = sub {
     for ( $_[0]->{log_level} ) {
         my $name = lc;
 
-           if ( $name eq 'critical' ) { $_ = dualvar( 0 => $name ) }
-        elsif ( $name eq 'error'    ) { $_ = dualvar( 1 => $name ) }
-        elsif ( $name eq 'warning'  ) { $_ = dualvar( 2 => $name ) }
-        elsif ( $name eq 'info'     ) { $_ = dualvar( 3 => $name ) }
-        elsif ( $name eq 'debug'    ) { $_ = dualvar( 4 => $name ) }
-        elsif ( $name eq 'trace'    ) { $_ = dualvar( 5 => $name ) }
+        if    ( $name eq 'critical' ) { $_ = dualvar( 0 => $name ) }
+        elsif ( $name eq 'error' )    { $_ = dualvar( 1 => $name ) }
+        elsif ( $name eq 'warning' )  { $_ = dualvar( 2 => $name ) }
+        elsif ( $name eq 'info' )     { $_ = dualvar( 3 => $name ) }
+        elsif ( $name eq 'debug' )    { $_ = dualvar( 4 => $name ) }
+        elsif ( $name eq 'trace' )    { $_ = dualvar( 5 => $name ) }
         else {
             warn "Unrecognised log level in config: $_";
             delete $_[0]->{log_level};
@@ -103,13 +110,13 @@ sub initialize {
     $config = $defaults;
 
     # Merge with config file
-    $config = merge( LoadFile( $config_file ), $config )
+    $config = merge( LoadFile($config_file), $config )
         if $config_file;
 
     # Merge with current environment
-    if ( $environment ) {
-        my $local = $config->{environments}{ $environment }
-            // croak "The current New Relic environment ($environment) is not defined";
+    if ($environment) {
+        my $local = $config->{environments}{$environment} // croak
+            "The current New Relic environment ($environment) is not defined";
 
         $config = merge( $local, $config );
     }
@@ -181,7 +188,7 @@ sub struct {
     $agent->{transaction_tracer}{datastore_reporting}{enabled} ||= 0;
     $agent->{transaction_tracer}{enabled}                      ||= 0;
 
-    NewFangle::Config->new( %$agent );
+    NewFangle::Config->new(%$agent);
 }
 
 1;

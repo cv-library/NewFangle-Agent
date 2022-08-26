@@ -80,11 +80,11 @@ USAGE
     my $cfg = NewFangle::Agent::Config->local_settings;
 
     NewFangle::newrelic_configure_log( @$cfg{qw( log_filename log_level )} );
-    NewFangle::newrelic_init( $ENV{NEWRELIC_DAEMON_HOST}, 100 );
+    NewFangle::newrelic_init( $cfg->{daemon_host},
+        $cfg->{daemon_timeout} // 100 );
 
-    my $app = eval {
-        NewFangle::App->new( NewFangle::Agent::Config->struct, 100 )
-    };
+    my $app
+        = eval { NewFangle::App->new( NewFangle::Agent::Config->struct, 100 ) };
 
     local $NewFangle::Agent::TX;
     $NewFangle::Agent::TX = $app->start_non_web_transaction($txn)

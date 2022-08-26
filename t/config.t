@@ -74,6 +74,15 @@ subtest 'Environment variables override local config' => sub {
 
     is +NewFangle::Agent::Config->local_settings,
         { %$global, enabled => $enabled }, 'State changed back';
+
+
+    # Add daemon host settings
+    local $ENV{NEWRELIC_DAEMON_HOST} = 'localhost';
+    local $ENV{NEWRELIC_DAEMON_TIMEOUT} = 300;
+
+    is +NewFangle::Agent::Config->local_settings, {
+        %$global, enabled => $enabled, daemon_host => 'localhost', daemon_timeout => 300,
+    }, 'Daemon host settings loaded from environment';
 };
 
 done_testing;

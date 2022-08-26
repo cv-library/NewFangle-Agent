@@ -9,10 +9,10 @@ use feature 'state';
 use parent 'Plack::Middleware';
 use Plack::Util::Accessor qw(
     start_transaction
-      end_transaction
+    end_transaction
 
     start_non_web_transaction
-      end_non_web_transaction
+    end_non_web_transaction
 
     error
 );
@@ -27,12 +27,12 @@ our $VERSION = '0.010';
 
 my %cache;
 
-sub prepare_app ( $self ) {
+sub prepare_app ($self) {
     # This does not include the query parameters to avoid PII
     $self->{start_transaction} //= sub ( $app, $env ) {
-        my $tx = $app->start_web_transaction(
-            $env->{REQUEST_URI} =~ s/\?.*//r,
-        );
+        my $tx
+            = $app->start_web_transaction( $env->{REQUEST_URI} =~ s/\?.*//r,
+            );
 
         $tx->add_attribute_string( host   => $env->{HTTP_HOST} );
         $tx->add_attribute_string( method => $env->{REQUEST_METHOD} );
@@ -42,19 +42,19 @@ sub prepare_app ( $self ) {
 
     $self->{end_transaction} //= sub ( $tx, $res, $env ) {
         $tx->add_attribute_int( status => $res->[0] // 500 );
-        $tx->set_name($env->{newrelic}{transaction_name}) if $env->{newrelic}{transaction_name};
+        $tx->set_name( $env->{newrelic}{transaction_name} )
+            if $env->{newrelic}{transaction_name};
         $tx->end;
     };
 
     $self->{start_non_web_transaction} //= sub ( $app, $env ) {
-        $app->start_non_web_transaction(
-            $env->{REQUEST_URI} =~ s/\?.*//r
-        );
+        $app->start_non_web_transaction( $env->{REQUEST_URI} =~ s/\?.*//r );
     };
 
     $self->{end_non_web_transaction} //= sub ( $tx, $res, $env ) {
         $tx->add_attribute_int( status => $res->[0] // 500 );
-        $tx->set_name($env->{newrelic}{transaction_name}) if $env->{newrelic}{transaction_name};
+        $tx->set_name( $env->{newrelic}{transaction_name} )
+            if $env->{newrelic}{transaction_name};
         $tx->end;
     };
 
@@ -65,7 +65,7 @@ sub prepare_app ( $self ) {
 
 sub call ( $self, $env ) {
     my $config      = NewFangle::Agent::Config->local_settings;
-    my $per_request = $env->{newrelic}; # Per-request configuration
+    my $per_request = $env->{newrelic};    # Per-request configuration
 
     return $self->app->($env)
         if !$config->{enabled} || $per_request->{ignore_transaction};
@@ -74,8 +74,8 @@ sub call ( $self, $env ) {
     local $NewFangle::Agent::Trace = $NewFangle::Agent::Trace;
 
     if ( exists $per_request->{suppress_transaction_trace} ) {
-        $NewFangle::Agent::Trace
-            = 0 if $per_request->{suppress_transaction_trace}
+        $NewFangle::Agent::Trace = 0
+            if $per_request->{suppress_transaction_trace};
     }
 
     my $name = $config->{app_name};
@@ -85,8 +85,10 @@ sub call ( $self, $env ) {
         # Try to initialise a connection to the NewRelic daemon
         # only once to avoid a connection error
         state $init = do {
-            die 'Missing host for New Relic daemon' unless $config->{daemon_host};
-            newrelic_init $config->{daemon_host}, 100
+            die 'Missing host for New Relic daemon'
+                unless $config->{daemon_host};
+            newrelic_init $config->{daemon_host},
+                $config->{daemon_timeout} // 100;
         };
 
         $app = NewFangle::App->new( NewFangle::Agent::Config->struct, 100 );
@@ -109,7 +111,7 @@ sub call ( $self, $env ) {
     my $web = $per_request->{set_background_task} ? 'non_web_' : '';
 
     my $start = $self->{"start_${web}transaction"};
-    my $end   = $self->{  "end_${web}transaction"};
+    my $end   = $self->{"end_${web}transaction"};
     my $error = $self->{error};
 
     my $tx = $NewFangle::Agent::TX = $app->$start($env);
@@ -119,7 +121,7 @@ sub call ( $self, $env ) {
     unless ( eval { $res = $self->app->($env); 1 } ) {
         my $err = $@;
 
-        $tx->$error( $err );
+        $tx->$error($err);
         $tx->$end( [500], $env );
 
         die $err;
