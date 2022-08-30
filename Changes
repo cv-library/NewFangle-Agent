@@ -1,6 +1,9 @@
 Revision history for NewFangle::Agent
 
 {{$NEXT}}
+
+0.010     2022-08-30 12:12:27 BST
+
     * Fixed an issue where environment variables would only be read into
       the global config if they were truthy. This has been changed so they
       are read if they are defined. This is similar to the issue fixed in
